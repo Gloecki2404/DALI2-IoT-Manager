@@ -1,0 +1,239 @@
+recall_scene:
+  target:
+    entity:
+      integration: lunatone_dali
+      domain: light
+  fields:
+    scene:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 15
+          mode: box
+    transition:
+      selector:
+        number:
+          min: 0
+          max: 3600
+          step: 0.1
+          unit_of_measurement: s
+
+save_scene:
+  target:
+    entity:
+      integration: lunatone_dali
+      domain: light
+  fields:
+    scene:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 15
+          mode: box
+
+dim_up:
+  target:
+    entity:
+      integration: lunatone_dali
+      domain: light
+  fields:
+    steps:
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 5
+
+dim_down:
+  target:
+    entity:
+      integration: lunatone_dali
+      domain: light
+  fields:
+    steps:
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 5
+
+goto_last_active:
+  target:
+    entity:
+      integration: lunatone_dali
+      domain: light
+  fields:
+    transition:
+      selector:
+        number:
+          min: 0
+          max: 3600
+          step: 0.1
+          unit_of_measurement: s
+
+set_fade_time:
+  target:
+    entity:
+      integration: lunatone_dali
+      domain: light
+  fields:
+    fade_time:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 960
+          step: 0.1
+          unit_of_measurement: s
+          mode: box
+
+set_fade_rate:
+  target:
+    entity:
+      integration: lunatone_dali
+      domain: light
+  fields:
+    fade_rate:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 400
+          step: 0.1
+          mode: box
+
+set_color_waf:
+  target:
+    entity:
+      integration: lunatone_dali
+      domain: light
+  fields:
+    white:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 1
+          step: 0.01
+    amber:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 1
+          step: 0.01
+    free:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 1
+          step: 0.01
+    brightness_pct:
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+
+send_raw_control:
+  target:
+    entity:
+      integration: lunatone_dali
+      domain: light
+  fields:
+    data:
+      required: true
+      example: '{"dimmableWithFade": {"dimValue": 50, "fadeTime": 2}}'
+      selector:
+        object:
+
+start_scan:
+  fields:
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: lunatone_dali
+    new_installation:
+      default: false
+      selector:
+        boolean:
+    no_addressing:
+      default: false
+      selector:
+        boolean:
+    lines:
+      selector:
+        object:
+
+send_dali16:
+  fields:
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: lunatone_dali
+    line:
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 3
+          mode: box
+    address:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: box
+    command:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: box
+
+send_dali24:
+  fields:
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: lunatone_dali
+    line:
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 3
+          mode: box
+    address:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: box
+    instance:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: box
+    command:
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 255
+          mode: box
+
+refresh:
+  fields:
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: lunatone_dali

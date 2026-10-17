@@ -1,0 +1,7 @@
+{
+    "0": {
+        "delayBetweenQueries": 1.0,
+        "queryStatus": true,
+        "queryActualLevel": true
+    }
+}

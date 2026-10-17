@@ -1,0 +1,10 @@
+{
+  "name": "Lunatone DALI-2 IoT",
+  "homeassistant": "2025.1.0",
+  "render_readme": true,
+  "country": [
+    "AT",
+    "DE",
+    "CH"
+  ]
+}

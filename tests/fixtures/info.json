@@ -1,0 +1,63 @@
+{
+    "name": "DALI-2 IoT",
+    "version": "v1.17.1/1.4.6",
+    "tier": "plus",
+    "emergencyLight": false,
+    "nodeRed": false,
+    "uid": "00000000-0000-4000-8000-000000000001",
+    "startupMode": "normal",
+    "errors": {},
+    "descriptor": {
+        "lines": 1,
+        "bufferSize": 32,
+        "tickResolution": 1978,
+        "maxYnFrameSize": 32,
+        "implementedMacros": [
+            132,
+            134,
+            138,
+            140,
+            144,
+            146,
+            148,
+            150,
+            158,
+            164,
+            184,
+            186
+        ],
+        "deviceListSpecifier": 1,
+        "protocolVersionMajor": 1,
+        "protocolVersionMinor": 6,
+        "powerSupplyImplemented": false
+    },
+    "device": {
+        "serial": 100000000001,
+        "gtin": 9010342013607,
+        "pcb": "2c",
+        "articleNumber": 89453886,
+        "articleInfo": "",
+        "productionYear": 2026,
+        "productionWeek": 7,
+        "deviceType": 49
+    },
+    "lines": {
+        "0": {
+            "sendBlockedInitialize": false,
+            "sendBlockedQuiescent": false,
+            "sendBlockedMacroRunning": false,
+            "sendBufferFull": false,
+            "lineStatus": "ok",
+            "device": {
+                "serial": 100000000001,
+                "gtin": 9010342013607,
+                "pcb": "2c",
+                "articleNumber": 89453886,
+                "articleInfo": "",
+                "productionYear": 2026,
+                "productionWeek": 7,
+                "deviceType": 49
+            }
+        }
+    }
+}

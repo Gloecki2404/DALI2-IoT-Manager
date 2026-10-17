@@ -1,0 +1,2149 @@
+{
+ "events": [
+  {
+   "type": "info",
+   "data": {
+    "name": "DALI-2 IoT",
+    "version": "v1.17.1/1.4.6",
+    "tier": "plus",
+    "emergencyLight": false,
+    "nodeRed": false,
+    "uid": "00000000-0000-4000-8000-000000000001",
+    "startupMode": "normal",
+    "errors": {},
+    "descriptor": {
+     "lines": 1,
+     "bufferSize": 32,
+     "tickResolution": 1978,
+     "maxYnFrameSize": 32,
+     "implementedMacros": [
+      132,
+      134,
+      138,
+      140,
+      144,
+      146,
+      148,
+      150,
+      158,
+      164,
+      184,
+      186
+     ],
+     "deviceListSpecifier": 1,
+     "protocolVersionMajor": 1,
+     "protocolVersionMinor": 6,
+     "powerSupplyImplemented": false
+    },
+    "device": {
+     "serial": 100000000001,
+     "gtin": 9010342013607,
+     "pcb": "2c",
+     "articleNumber": 89453886,
+     "articleInfo": "",
+     "productionYear": 2026,
+     "productionWeek": 7,
+     "deviceType": 49
+    },
+    "lines": {
+     "0": {
+      "sendBlockedInitialize": false,
+      "sendBlockedQuiescent": false,
+      "sendBlockedMacroRunning": false,
+      "sendBufferFull": false,
+      "lineStatus": "ok",
+      "device": {
+       "serial": 100000000001,
+       "gtin": 9010342013607,
+       "pcb": "2c",
+       "articleNumber": 89453886,
+       "articleInfo": "",
+       "productionYear": 2026,
+       "productionWeek": 7,
+       "deviceType": 49
+      }
+     }
+    }
+   },
+   "timeSignature": {
+    "timestamp": 1790536301.9989278,
+    "counter": 1861
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 2,
+      "status": {
+       "raw": 0,
+       "controlGearFailure": false,
+       "lampFailure": false,
+       "lampOn": false,
+       "limitError": false,
+       "fadeRunning": false,
+       "resetState": false,
+       "shortAddress": false,
+       "powerCycleSeen": false
+      },
+      "features": {
+       "switchable": {
+        "status": true
+       },
+       "dimmable": {
+        "status": 100.0
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 100.0,
+         "fadeTime": 0.7
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536304.0435083,
+    "counter": 1870
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 2,
+      "features": {
+       "switchable": {
+        "status": true
+       },
+       "dimmable": {
+        "status": 29.92125984251969
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 29.92125984251969,
+         "fadeTime": 0.7
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536308.1450706,
+    "counter": 1884
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 2,
+      "status": {
+       "raw": 12,
+       "controlGearFailure": false,
+       "lampFailure": false,
+       "lampOn": true,
+       "limitError": true,
+       "fadeRunning": false,
+       "resetState": false,
+       "shortAddress": false,
+       "powerCycleSeen": false
+      },
+      "features": {
+       "switchable": {
+        "status": true
+       },
+       "dimmable": {
+        "status": 39.37007874015748
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 39.37007874015748,
+         "fadeTime": 0.7
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536310.5761073,
+    "counter": 1897
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 1,
+      "name": "broadcast",
+      "targets": [
+       {
+        "type": "broadcast",
+        "id": null
+       }
+      ],
+      "features": {
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 39.76377952755906,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.3043468,
+    "counter": 1908
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 3,
+      "name": "group 1",
+      "targets": [
+       {
+        "type": "group",
+        "id": 1
+       }
+      ],
+      "features": {
+       "switchable": {
+        "status": true
+       },
+       "dimmable": {
+        "status": 39.76377952755906
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 39.76377952755906,
+         "fadeTime": 0.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 39.76377952755906,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.309185,
+    "counter": 1909
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 1,
+      "status": {
+       "raw": 0,
+       "controlGearFailure": false,
+       "lampFailure": false,
+       "lampOn": false,
+       "limitError": false,
+       "fadeRunning": false,
+       "resetState": false,
+       "shortAddress": false,
+       "powerCycleSeen": false
+      },
+      "features": {
+       "switchable": {
+        "status": true
+       },
+       "dimmable": {
+        "status": 39.76377952755906
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 39.76377952755906,
+         "fadeTime": 0.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 39.76377952755906,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.3115177,
+    "counter": 1910
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 1,
+      "name": "broadcast",
+      "targets": [
+       {
+        "type": "broadcast",
+        "id": null
+       }
+      ],
+      "features": {
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 0.0,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536316.334892,
+    "counter": 1927
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 3,
+      "name": "group 1",
+      "targets": [
+       {
+        "type": "group",
+        "id": 1
+       }
+      ],
+      "features": {
+       "switchable": {
+        "status": false
+       },
+       "dimmable": {
+        "status": 0.0
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 0.0,
+         "fadeTime": 0.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 0.0,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536316.340686,
+    "counter": 1928
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 1,
+      "features": {
+       "switchable": {
+        "status": false
+       },
+       "dimmable": {
+        "status": 0.0
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 0.0,
+         "fadeTime": 0.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 0.0,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536316.3432364,
+    "counter": 1929
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 1,
+      "name": "broadcast",
+      "targets": [
+       {
+        "type": "broadcast",
+        "id": null
+       }
+      ],
+      "features": {
+       "switchable": {
+        "status": false
+       },
+       "dimmable": {
+        "status": 0.0
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536317.3802285,
+    "counter": 1935
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 2,
+      "features": {
+       "switchable": {
+        "status": false
+       },
+       "dimmable": {
+        "status": 0.0
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 0.0,
+         "fadeTime": 0.7
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536317.3862967,
+    "counter": 1936
+   }
+  },
+  {
+   "type": "info",
+   "data": {
+    "name": "DALI-2 IoT",
+    "version": "v1.17.1/1.4.6",
+    "tier": "plus",
+    "emergencyLight": false,
+    "nodeRed": false,
+    "uid": "00000000-0000-4000-8000-000000000001",
+    "startupMode": "normal",
+    "errors": {},
+    "descriptor": {
+     "lines": 1,
+     "bufferSize": 32,
+     "tickResolution": 1978,
+     "maxYnFrameSize": 32,
+     "implementedMacros": [
+      132,
+      134,
+      138,
+      140,
+      144,
+      146,
+      148,
+      150,
+      158,
+      164,
+      184,
+      186
+     ],
+     "deviceListSpecifier": 1,
+     "protocolVersionMajor": 1,
+     "protocolVersionMinor": 6,
+     "powerSupplyImplemented": false
+    },
+    "device": {
+     "serial": 100000000001,
+     "gtin": 9010342013607,
+     "pcb": "2c",
+     "articleNumber": 89453886,
+     "articleInfo": "",
+     "productionYear": 2026,
+     "productionWeek": 7,
+     "deviceType": 49
+    },
+    "lines": {
+     "0": {
+      "sendBlockedInitialize": false,
+      "sendBlockedQuiescent": false,
+      "sendBlockedMacroRunning": false,
+      "sendBufferFull": false,
+      "lineStatus": "ok",
+      "device": {
+       "serial": 100000000001,
+       "gtin": 9010342013607,
+       "pcb": "2c",
+       "articleNumber": 89453886,
+       "articleInfo": "",
+       "productionYear": 2026,
+       "productionWeek": 7,
+       "deviceType": 49
+      }
+     }
+    }
+   },
+   "timeSignature": {
+    "timestamp": 1790536341.4506261,
+    "counter": 2019
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 1,
+      "name": "broadcast",
+      "targets": [
+       {
+        "type": "broadcast",
+        "id": null
+       }
+      ],
+      "features": {
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 59.84251968503938,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536342.9913476,
+    "counter": 2026
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 3,
+      "name": "group 1",
+      "targets": [
+       {
+        "type": "group",
+        "id": 1
+       }
+      ],
+      "features": {
+       "switchable": {
+        "status": true
+       },
+       "dimmable": {
+        "status": 59.84251968503938
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 59.84251968503938,
+         "fadeTime": 0.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 59.84251968503938,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536342.9986832,
+    "counter": 2027
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 1,
+      "features": {
+       "switchable": {
+        "status": true
+       },
+       "dimmable": {
+        "status": 59.84251968503938
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 59.84251968503938,
+         "fadeTime": 0.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 59.84251968503938,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536343.00212,
+    "counter": 2028
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 3,
+      "name": "group 1",
+      "targets": [
+       {
+        "type": "group",
+        "id": 1
+       }
+      ],
+      "features": {
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 59.84251968503938,
+         "fadeTime": 1.0
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536349.3805506,
+    "counter": 2061
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 1,
+      "features": {
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 59.84251968503938,
+         "fadeTime": 1.0
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536349.382932,
+    "counter": 2062
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 1
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536349.546959,
+    "counter": 2069
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 1,
+      "status": {
+       "raw": 20,
+       "controlGearFailure": false,
+       "lampFailure": false,
+       "lampOn": true,
+       "limitError": false,
+       "fadeRunning": true,
+       "resetState": false,
+       "shortAddress": false,
+       "powerCycleSeen": false
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536352.681312,
+    "counter": 2090
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 1,
+      "name": "broadcast",
+      "targets": [
+       {
+        "type": "broadcast",
+        "id": null
+       }
+      ],
+      "features": {
+       "switchable": {
+        "status": false
+       },
+       "dimmable": {
+        "status": 0.0
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 0.0,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536360.791305,
+    "counter": 2132
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 3,
+      "name": "group 1",
+      "targets": [
+       {
+        "type": "group",
+        "id": 1
+       }
+      ],
+      "features": {
+       "switchable": {
+        "status": false
+       },
+       "dimmable": {
+        "status": 0.0
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 0.0,
+         "fadeTime": 1.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 0.0,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536360.7970684,
+    "counter": 2133
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 1,
+      "status": {
+       "raw": 4,
+       "controlGearFailure": false,
+       "lampFailure": false,
+       "lampOn": true,
+       "limitError": false,
+       "fadeRunning": false,
+       "resetState": false,
+       "shortAddress": false,
+       "powerCycleSeen": false
+      },
+      "features": {
+       "switchable": {
+        "status": false
+       },
+       "dimmable": {
+        "status": 0.0
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 0.0,
+         "fadeTime": 1.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 0.0,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536360.7999506,
+    "counter": 2134
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 1,
+      "name": "broadcast",
+      "targets": [
+       {
+        "type": "broadcast",
+        "id": null
+       }
+      ],
+      "features": {
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 59.84251968503938,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536372.3044229,
+    "counter": 2142
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 3,
+      "name": "group 1",
+      "targets": [
+       {
+        "type": "group",
+        "id": 1
+       }
+      ],
+      "features": {
+       "switchable": {
+        "status": true
+       },
+       "dimmable": {
+        "status": 59.84251968503938
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 59.84251968503938,
+         "fadeTime": 1.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 59.84251968503938,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536372.310771,
+    "counter": 2143
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 1,
+      "features": {
+       "switchable": {
+        "status": true
+       },
+       "dimmable": {
+        "status": 59.84251968503938
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 59.84251968503938,
+         "fadeTime": 1.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 59.84251968503938,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536372.3131902,
+    "counter": 2144
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 1,
+      "name": "broadcast",
+      "targets": [
+       {
+        "type": "broadcast",
+        "id": null
+       }
+      ],
+      "features": {
+       "switchable": {
+        "status": false
+       },
+       "dimmable": {
+        "status": 0.0
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 0.0,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536375.5985203,
+    "counter": 2156
+   }
+  },
+  {
+   "type": "zones",
+   "data": {
+    "zones": [
+     {
+      "id": 3,
+      "name": "group 1",
+      "targets": [
+       {
+        "type": "group",
+        "id": 1
+       }
+      ],
+      "features": {
+       "switchable": {
+        "status": false
+       },
+       "dimmable": {
+        "status": 0.0
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 0.0,
+         "fadeTime": 1.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 0.0,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536375.6044054,
+    "counter": 2157
+   }
+  },
+  {
+   "type": "devices",
+   "data": {
+    "devices": [
+     {
+      "id": 1,
+      "features": {
+       "switchable": {
+        "status": false
+       },
+       "dimmable": {
+        "status": 0.0
+       },
+       "dimmableWithFade": {
+        "status": {
+         "dimValue": 0.0,
+         "fadeTime": 1.0
+        }
+       },
+       "dimmableKelvin": {
+        "status": {
+         "dimmable": 0.0,
+         "kelvin": 3236
+        }
+       }
+      }
+     }
+    ]
+   },
+   "timeSignature": {
+    "timestamp": 1790536375.6069322,
+    "counter": 2158
+   }
+  }
+ ],
+ "monitor": [
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 28534,
+    "timestamp": 1790536302.5949588,
+    "bits": 16,
+    "data": [
+     7,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536302.597387,
+    "counter": 1863
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 28541,
+    "timestamp": 1790536302.6110356,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536302.6128252,
+    "counter": 1864
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 28567,
+    "timestamp": 1790536302.6595232,
+    "bits": 16,
+    "data": [
+     7,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536302.6612334,
+    "counter": 1865
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 28574,
+    "timestamp": 1790536302.673475,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536302.6752963,
+    "counter": 1866
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 29098,
+    "timestamp": 1790536303.7117295,
+    "bits": 16,
+    "data": [
+     9,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536303.714253,
+    "counter": 1867
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 29125,
+    "timestamp": 1790536303.7650068,
+    "bits": 16,
+    "data": [
+     9,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536303.7675629,
+    "counter": 1868
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 29251,
+    "timestamp": 1790536304.0136604,
+    "bits": 16,
+    "data": [
+     1,
+     5
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": false
+   },
+   "timeSignature": {
+    "timestamp": 1790536304.015543,
+    "counter": 1869
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 29657,
+    "timestamp": 1790536304.8184838,
+    "bits": 16,
+    "data": [
+     11,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536304.820904,
+    "counter": 1871
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 29665,
+    "timestamp": 1790536304.8345973,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536304.8363864,
+    "counter": 1872
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 29691,
+    "timestamp": 1790536304.884216,
+    "bits": 16,
+    "data": [
+     11,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536304.8853362,
+    "counter": 1873
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 29698,
+    "timestamp": 1790536304.8986838,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536304.8999555,
+    "counter": 1874
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 30222,
+    "timestamp": 1790536305.936953,
+    "bits": 16,
+    "data": [
+     13,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536305.939525,
+    "counter": 1875
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 30229,
+    "timestamp": 1790536305.9529362,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536305.9548564,
+    "counter": 1876
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 30256,
+    "timestamp": 1790536306.003011,
+    "bits": 16,
+    "data": [
+     13,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536306.0041387,
+    "counter": 1877
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 30263,
+    "timestamp": 1790536306.0165865,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536306.0174077,
+    "counter": 1878
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 30786,
+    "timestamp": 1790536307.0540109,
+    "bits": 16,
+    "data": [
+     15,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536307.056467,
+    "counter": 1879
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 30794,
+    "timestamp": 1790536307.072396,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536307.0742962,
+    "counter": 1880
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 30829,
+    "timestamp": 1790536307.1381211,
+    "bits": 16,
+    "data": [
+     15,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536307.1398904,
+    "counter": 1881
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 30836,
+    "timestamp": 1790536307.1532044,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536307.1551058,
+    "counter": 1882
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 31321,
+    "timestamp": 1790536308.1128752,
+    "bits": 16,
+    "data": [
+     0,
+     76
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": false
+   },
+   "timeSignature": {
+    "timestamp": 1790536308.1151493,
+    "counter": 1883
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 31360,
+    "timestamp": 1790536308.1886282,
+    "bits": 16,
+    "data": [
+     17,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536308.1901927,
+    "counter": 1885
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 31367,
+    "timestamp": 1790536308.2045393,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536308.2065465,
+    "counter": 1886
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 31400,
+    "timestamp": 1790536308.2684886,
+    "bits": 16,
+    "data": [
+     17,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536308.2708209,
+    "counter": 1887
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 31407,
+    "timestamp": 1790536308.284723,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536308.2867794,
+    "counter": 1888
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 31932,
+    "timestamp": 1790536309.3227193,
+    "bits": 16,
+    "data": [
+     3,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536309.3251202,
+    "counter": 1889
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 31940,
+    "timestamp": 1790536309.3390663,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536309.34085,
+    "counter": 1890
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 31972,
+    "timestamp": 1790536309.4002752,
+    "bits": 16,
+    "data": [
+     3,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536309.4012628,
+    "counter": 1891
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 31979,
+    "timestamp": 1790536309.4144077,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536309.4153924,
+    "counter": 1892
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 32502,
+    "timestamp": 1790536310.4514225,
+    "bits": 16,
+    "data": [
+     1,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536310.4540038,
+    "counter": 1893
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 32509,
+    "timestamp": 1790536310.467716,
+    "bits": 8,
+    "data": [
+     12
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536310.469504,
+    "counter": 1894
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 32546,
+    "timestamp": 1790536310.537206,
+    "bits": 16,
+    "data": [
+     1,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536310.5386739,
+    "counter": 1895
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 32553,
+    "timestamp": 1790536310.5510118,
+    "bits": 8,
+    "data": [
+     100
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536310.5519695,
+    "counter": 1896
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33076,
+    "timestamp": 1790536311.587785,
+    "bits": 16,
+    "data": [
+     5,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536311.590353,
+    "counter": 1898
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33083,
+    "timestamp": 1790536311.6039972,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536311.6064148,
+    "counter": 1899
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33109,
+    "timestamp": 1790536311.6516755,
+    "bits": 16,
+    "data": [
+     5,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536311.6528049,
+    "counter": 1900
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33116,
+    "timestamp": 1790536311.6662986,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536311.6675944,
+    "counter": 1901
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33374,
+    "timestamp": 1790536312.250404,
+    "bits": 16,
+    "data": [
+     163,
+     200
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": false
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.2514532,
+    "counter": 1903
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33389,
+    "timestamp": 1790536312.2528625,
+    "bits": 16,
+    "data": [
+     195,
+     0
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": false
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.2539132,
+    "counter": 1904
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33403,
+    "timestamp": 1790536312.2553172,
+    "bits": 16,
+    "data": [
+     193,
+     8
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": false
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.2561789,
+    "counter": 1905
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33417,
+    "timestamp": 1790536312.2676427,
+    "bits": 16,
+    "data": [
+     3,
+     231
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": false
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.2686577,
+    "counter": 1906
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33432,
+    "timestamp": 1790536312.291022,
+    "bits": 16,
+    "data": [
+     2,
+     101
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": false
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.2918015,
+    "counter": 1907
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33640,
+    "timestamp": 1790536312.70462,
+    "bits": 16,
+    "data": [
+     7,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.7071867,
+    "counter": 1911
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33647,
+    "timestamp": 1790536312.7208169,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.722811,
+    "counter": 1912
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33674,
+    "timestamp": 1790536312.7703576,
+    "bits": 16,
+    "data": [
+     7,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.7713563,
+    "counter": 1913
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 33681,
+    "timestamp": 1790536312.7840054,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536312.7847185,
+    "counter": 1914
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 34203,
+    "timestamp": 1790536313.8193643,
+    "bits": 16,
+    "data": [
+     9,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536313.8218772,
+    "counter": 1915
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 34231,
+    "timestamp": 1790536313.8748558,
+    "bits": 16,
+    "data": [
+     9,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536313.8772693,
+    "counter": 1916
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 34764,
+    "timestamp": 1790536314.9300349,
+    "bits": 16,
+    "data": [
+     11,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536314.9324713,
+    "counter": 1917
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 34771,
+    "timestamp": 1790536314.9460158,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536314.9478087,
+    "counter": 1918
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 34798,
+    "timestamp": 1790536314.9956944,
+    "bits": 16,
+    "data": [
+     11,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536314.9966884,
+    "counter": 1919
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 34805,
+    "timestamp": 1790536315.0094128,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536315.0102432,
+    "counter": 1920
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 35327,
+    "timestamp": 1790536316.0446174,
+    "bits": 16,
+    "data": [
+     13,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536316.0471976,
+    "counter": 1921
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 35335,
+    "timestamp": 1790536316.061229,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536316.063133,
+    "counter": 1922
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 35362,
+    "timestamp": 1790536316.1125104,
+    "bits": 16,
+    "data": [
+     13,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536316.113631,
+    "counter": 1923
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 35369,
+    "timestamp": 1790536316.1270342,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536316.1282687,
+    "counter": 1924
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 35462,
+    "timestamp": 1790536316.3112137,
+    "bits": 16,
+    "data": [
+     3,
+     0
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": false
+   },
+   "timeSignature": {
+    "timestamp": 1790536316.312916,
+    "counter": 1926
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 35893,
+    "timestamp": 1790536317.1653976,
+    "bits": 16,
+    "data": [
+     15,
+     144
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536317.1679697,
+    "counter": 1930
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 35900,
+    "timestamp": 1790536317.181561,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536317.183209,
+    "counter": 1931
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 35926,
+    "timestamp": 1790536317.229179,
+    "bits": 16,
+    "data": [
+     15,
+     160
+    ],
+    "line": 0,
+    "externalSource": false,
+    "query": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536317.2304795,
+    "counter": 1932
+   }
+  },
+  {
+   "type": "daliMonitor",
+   "data": {
+    "tick_us": 35933,
+    "timestamp": 1790536317.243019,
+    "bits": 8,
+    "data": [
+     0
+    ],
+    "line": 0,
+    "externalSource": true
+   },
+   "timeSignature": {
+    "timestamp": 1790536317.2438307,
+    "counter": 1933
+   }
+  }
+ ]
+}

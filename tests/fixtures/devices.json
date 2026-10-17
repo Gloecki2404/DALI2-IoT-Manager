@@ -1,0 +1,558 @@
+{
+    "devices": [
+        {
+            "id": 1,
+            "name": "Line 0 - DALI#01",
+            "type": "default",
+            "available": true,
+            "status": {
+                "raw": 0,
+                "controlGearFailure": false,
+                "lampFailure": false,
+                "lampOn": false,
+                "limitError": false,
+                "fadeRunning": false,
+                "resetState": false,
+                "isUnaddressed": false,
+                "powerCycleSeen": false
+            },
+            "features": {
+                "switchable": {
+                    "status": false
+                },
+                "dimmable": {
+                    "status": 0.0
+                },
+                "dimmableWithFade": {
+                    "status": {
+                        "dimValue": 0.0,
+                        "fadeTime": 0.0
+                    }
+                },
+                "dimUp": true,
+                "dimDown": true,
+                "scene": true,
+                "sceneWithFade": {
+                    "status": {
+                        "fadeTime": 0.0
+                    }
+                },
+                "gotoLastActive": {},
+                "gotoLastActiveWithFade": {
+                    "status": {
+                        "fadeTime": 0.0
+                    }
+                },
+                "daliCmd16": true,
+                "fadeTime": {
+                    "status": 0.0
+                },
+                "fadeRate": {
+                    "status": 44.7
+                },
+                "saveToScene": true,
+                "colorKelvin": {
+                    "status": 3236
+                },
+                "dimmableKelvin": {
+                    "status": {
+                        "dimmable": 0.0,
+                        "kelvin": 3236
+                    }
+                },
+                "colorKelvinWithFade": {
+                    "status": {
+                        "color": 3236,
+                        "fadeTime": 0.0
+                    }
+                }
+            },
+            "groups": [
+                1
+            ],
+            "address": 1,
+            "line": 0,
+            "daliTypes": [
+                6,
+                8
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Line 0 - DALI#00",
+            "type": "default",
+            "available": true,
+            "status": {
+                "raw": 0,
+                "controlGearFailure": false,
+                "lampFailure": false,
+                "lampOn": false,
+                "limitError": false,
+                "fadeRunning": false,
+                "resetState": false,
+                "isUnaddressed": false,
+                "powerCycleSeen": false
+            },
+            "features": {
+                "switchable": {
+                    "status": false
+                },
+                "dimmable": {
+                    "status": 0.0
+                },
+                "dimmableWithFade": {
+                    "status": {
+                        "dimValue": 0.0,
+                        "fadeTime": 0.7
+                    }
+                },
+                "dimUp": true,
+                "dimDown": true,
+                "scene": true,
+                "sceneWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "gotoLastActive": {},
+                "gotoLastActiveWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "daliCmd16": true,
+                "fadeTime": {
+                    "status": 0.7
+                },
+                "fadeRate": {
+                    "status": 44.7
+                },
+                "saveToScene": true
+            },
+            "groups": [],
+            "address": 0,
+            "line": 0,
+            "daliTypes": [
+                6
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Line 0 - DALI#02",
+            "type": "default",
+            "available": true,
+            "status": {
+                "raw": 0,
+                "controlGearFailure": false,
+                "lampFailure": false,
+                "lampOn": false,
+                "limitError": false,
+                "fadeRunning": false,
+                "resetState": false,
+                "isUnaddressed": false,
+                "powerCycleSeen": false
+            },
+            "features": {
+                "switchable": {
+                    "status": false
+                },
+                "dimmable": {
+                    "status": 0.0
+                },
+                "dimmableWithFade": {
+                    "status": {
+                        "dimValue": 0.0,
+                        "fadeTime": 0.7
+                    }
+                },
+                "dimUp": true,
+                "dimDown": true,
+                "scene": true,
+                "sceneWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "gotoLastActive": {},
+                "gotoLastActiveWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "daliCmd16": true,
+                "fadeTime": {
+                    "status": 0.7
+                },
+                "fadeRate": {
+                    "status": 44.7
+                },
+                "saveToScene": true
+            },
+            "groups": [],
+            "address": 2,
+            "line": 0,
+            "daliTypes": [
+                6
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Line 0 - DALI#03",
+            "type": "default",
+            "available": true,
+            "status": {
+                "raw": 0,
+                "controlGearFailure": false,
+                "lampFailure": false,
+                "lampOn": false,
+                "limitError": false,
+                "fadeRunning": false,
+                "resetState": false,
+                "isUnaddressed": false,
+                "powerCycleSeen": false
+            },
+            "features": {
+                "switchable": {
+                    "status": false
+                },
+                "dimmable": {
+                    "status": 0.0
+                },
+                "dimmableWithFade": {
+                    "status": {
+                        "dimValue": 0.0,
+                        "fadeTime": 0.7
+                    }
+                },
+                "dimUp": true,
+                "dimDown": true,
+                "scene": true,
+                "sceneWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "gotoLastActive": {},
+                "gotoLastActiveWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "daliCmd16": true,
+                "fadeTime": {
+                    "status": 0.7
+                },
+                "fadeRate": {
+                    "status": 44.7
+                },
+                "saveToScene": true
+            },
+            "groups": [],
+            "address": 3,
+            "line": 0,
+            "daliTypes": [
+                6
+            ]
+        },
+        {
+            "id": 5,
+            "name": "Line 0 - DALI#04",
+            "type": "default",
+            "available": false,
+            "status": {
+                "raw": 4,
+                "controlGearFailure": false,
+                "lampFailure": false,
+                "lampOn": true,
+                "limitError": false,
+                "fadeRunning": false,
+                "resetState": false,
+                "isUnaddressed": false,
+                "powerCycleSeen": false
+            },
+            "features": {
+                "switchable": {
+                    "status": false
+                },
+                "dimmable": {
+                    "status": 0.0
+                },
+                "dimmableWithFade": {
+                    "status": {
+                        "dimValue": 0.0,
+                        "fadeTime": 0.7
+                    }
+                },
+                "dimUp": true,
+                "dimDown": true,
+                "scene": true,
+                "sceneWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "gotoLastActive": {},
+                "gotoLastActiveWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "daliCmd16": true,
+                "fadeTime": {
+                    "status": 0.7
+                },
+                "fadeRate": {
+                    "status": 44.7
+                },
+                "saveToScene": true
+            },
+            "groups": [],
+            "address": 4,
+            "line": 0,
+            "daliTypes": [
+                6,
+                50
+            ]
+        },
+        {
+            "id": 6,
+            "name": "Line 0 - DALI#05",
+            "type": "default",
+            "available": true,
+            "status": {
+                "raw": 0,
+                "controlGearFailure": false,
+                "lampFailure": false,
+                "lampOn": false,
+                "limitError": false,
+                "fadeRunning": false,
+                "resetState": false,
+                "isUnaddressed": false,
+                "powerCycleSeen": false
+            },
+            "features": {
+                "switchable": {
+                    "status": false
+                },
+                "dimmable": {
+                    "status": 0.0
+                },
+                "dimmableWithFade": {
+                    "status": {
+                        "dimValue": 0.0,
+                        "fadeTime": 0.7
+                    }
+                },
+                "dimUp": true,
+                "dimDown": true,
+                "scene": true,
+                "sceneWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "gotoLastActive": {},
+                "gotoLastActiveWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "daliCmd16": true,
+                "fadeTime": {
+                    "status": 0.7
+                },
+                "fadeRate": {
+                    "status": 44.7
+                },
+                "saveToScene": true
+            },
+            "groups": [],
+            "address": 5,
+            "line": 0,
+            "daliTypes": [
+                6
+            ]
+        },
+        {
+            "id": 7,
+            "name": "Line 0 - DALI#06",
+            "type": "default",
+            "available": true,
+            "status": {
+                "raw": 0,
+                "controlGearFailure": false,
+                "lampFailure": false,
+                "lampOn": false,
+                "limitError": false,
+                "fadeRunning": false,
+                "resetState": false,
+                "isUnaddressed": false,
+                "powerCycleSeen": false
+            },
+            "features": {
+                "switchable": {
+                    "status": false
+                },
+                "dimmable": {
+                    "status": 0.0
+                },
+                "dimmableWithFade": {
+                    "status": {
+                        "dimValue": 0.0,
+                        "fadeTime": 0.7
+                    }
+                },
+                "dimUp": true,
+                "dimDown": true,
+                "scene": true,
+                "sceneWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "gotoLastActive": {},
+                "gotoLastActiveWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "daliCmd16": true,
+                "fadeTime": {
+                    "status": 0.7
+                },
+                "fadeRate": {
+                    "status": 44.7
+                },
+                "saveToScene": true
+            },
+            "groups": [],
+            "address": 6,
+            "line": 0,
+            "daliTypes": [
+                6
+            ]
+        },
+        {
+            "id": 8,
+            "name": "Line 0 - DALI#07",
+            "type": "default",
+            "available": true,
+            "status": {
+                "raw": 0,
+                "controlGearFailure": false,
+                "lampFailure": false,
+                "lampOn": false,
+                "limitError": false,
+                "fadeRunning": false,
+                "resetState": false,
+                "isUnaddressed": false,
+                "powerCycleSeen": false
+            },
+            "features": {
+                "switchable": {
+                    "status": false
+                },
+                "dimmable": {
+                    "status": 0.0
+                },
+                "dimmableWithFade": {
+                    "status": {
+                        "dimValue": 0.0,
+                        "fadeTime": 0.7
+                    }
+                },
+                "dimUp": true,
+                "dimDown": true,
+                "scene": true,
+                "sceneWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "gotoLastActive": {},
+                "gotoLastActiveWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "daliCmd16": true,
+                "fadeTime": {
+                    "status": 0.7
+                },
+                "fadeRate": {
+                    "status": 44.7
+                },
+                "saveToScene": true
+            },
+            "groups": [],
+            "address": 7,
+            "line": 0,
+            "daliTypes": [
+                6
+            ]
+        },
+        {
+            "id": 9,
+            "name": "Line 0 - DALI#08",
+            "type": "default",
+            "available": true,
+            "status": {
+                "raw": 0,
+                "controlGearFailure": false,
+                "lampFailure": false,
+                "lampOn": false,
+                "limitError": false,
+                "fadeRunning": false,
+                "resetState": false,
+                "isUnaddressed": false,
+                "powerCycleSeen": false
+            },
+            "features": {
+                "switchable": {
+                    "status": false
+                },
+                "dimmable": {
+                    "status": 0.0
+                },
+                "dimmableWithFade": {
+                    "status": {
+                        "dimValue": 0.0,
+                        "fadeTime": 0.7
+                    }
+                },
+                "dimUp": true,
+                "dimDown": true,
+                "scene": true,
+                "sceneWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "gotoLastActive": {},
+                "gotoLastActiveWithFade": {
+                    "status": {
+                        "fadeTime": 0.7
+                    }
+                },
+                "daliCmd16": true,
+                "fadeTime": {
+                    "status": 0.7
+                },
+                "fadeRate": {
+                    "status": 44.7
+                },
+                "saveToScene": true
+            },
+            "groups": [],
+            "address": 8,
+            "line": 0,
+            "daliTypes": [
+                6
+            ]
+        }
+    ],
+    "timeSignature": {
+        "timestamp": 1790536434.844511,
+        "counter": 2377
+    }
+}

@@ -1,0 +1,516 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Lunatone DALI-2 IoT",
+        "description": "How do you want to add the gateway?",
+        "menu_options": {
+          "manual": "Enter address manually",
+          "scan": "Search the network"
+        }
+      },
+      "manual": {
+        "title": "Enter address manually",
+        "data": {
+          "host": "Host / IP address"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the Lunatone DALI-2 IoT gateway, e.g. 192.168.0.236"
+        }
+      },
+      "scan": {
+        "title": "Gateways found",
+        "data": {
+          "host": "Gateway"
+        }
+      },
+      "hassio_confirm": {
+        "title": "Lunatone DALI-2 IoT (via add-on)",
+        "description": "The DALI-2 IoT Manager add-on found the gateway **{name}** at {host}. Add it to Home Assistant?"
+      },
+      "reconfigure": {
+        "title": "Change gateway address",
+        "data": {
+          "host": "Host / IP address"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the Lunatone DALI-2 IoT gateway, e.g. 192.168.0.236"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to a DALI-2 IoT gateway at this address."
+    },
+    "abort": {
+      "already_configured": "This gateway is already configured.",
+      "cannot_connect": "Cannot connect to a DALI-2 IoT gateway at this address.",
+      "no_devices_found": "No DALI-2 IoT gateway found in the local network. Please enter the address manually.",
+      "wrong_device": "This is a different gateway.",
+      "reconfigure_successful": "The address was updated."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "expose_groups": "DALI groups as lights",
+          "expose_broadcast": "Broadcast (all lights) as light",
+          "learn_inputs": "Learn push buttons & sensors from bus events",
+          "default_transition": "Default transition (0 = gateway fade time)",
+          "min_kelvin": "Warmest colour temperature",
+          "max_kelvin": "Coldest colour temperature",
+          "scan_interval": "Polling interval (fallback)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "light": {
+      "broadcast": {
+        "name": "Broadcast (all lights)"
+      },
+      "group": {
+        "name": "DALI group {number}"
+      }
+    },
+    "binary_sensor": {
+      "lamp_failure": {
+        "name": "Lamp failure"
+      },
+      "gear_failure": {
+        "name": "Control gear failure"
+      },
+      "limit_error": {
+        "name": "Limit error"
+      },
+      "power_cycle_seen": {
+        "name": "Power cycle seen"
+      },
+      "reset_state": {
+        "name": "Reset state"
+      },
+      "lamp_on": {
+        "name": "Lamp on"
+      },
+      "reachable": {
+        "name": "Reachable"
+      },
+      "websocket": {
+        "name": "Live connection"
+      },
+      "line_problem": {
+        "name": "DALI line {line} problem"
+      },
+      "diag_gear_overall_failure": {
+        "name": "Gear overall failure"
+      },
+      "diag_undervoltage": {
+        "name": "Supply undervoltage"
+      },
+      "diag_overvoltage": {
+        "name": "Supply overvoltage"
+      },
+      "diag_power_limitation": {
+        "name": "Output power limitation"
+      },
+      "diag_gear_thermal_derating": {
+        "name": "Gear thermal derating"
+      },
+      "diag_gear_thermal_shutdown": {
+        "name": "Gear thermal shutdown"
+      },
+      "diag_light_overall_failure": {
+        "name": "Light source failure"
+      },
+      "diag_short_circuit": {
+        "name": "Light source short circuit"
+      },
+      "diag_open_circuit": {
+        "name": "Light source open circuit"
+      },
+      "diag_light_thermal_derating": {
+        "name": "Light source thermal derating"
+      },
+      "diag_light_thermal_shutdown": {
+        "name": "Light source thermal shutdown"
+      }
+    },
+    "sensor": {
+      "active_energy": {
+        "name": "Energy"
+      },
+      "active_power": {
+        "name": "Power"
+      },
+      "apparent_energy": {
+        "name": "Apparent energy"
+      },
+      "apparent_power": {
+        "name": "Apparent power"
+      },
+      "loadside_energy": {
+        "name": "Load side energy"
+      },
+      "loadside_power": {
+        "name": "Load side power"
+      },
+      "gear_operating_time": {
+        "name": "Gear operating time"
+      },
+      "gear_start_counter": {
+        "name": "Gear starts"
+      },
+      "supply_voltage": {
+        "name": "Supply voltage"
+      },
+      "supply_frequency": {
+        "name": "Supply frequency"
+      },
+      "power_factor": {
+        "name": "Power factor"
+      },
+      "gear_temperature": {
+        "name": "Gear temperature"
+      },
+      "output_current": {
+        "name": "Output current"
+      },
+      "light_start_counter": {
+        "name": "Light source starts"
+      },
+      "light_start_counter_resettable": {
+        "name": "Light source starts (resettable)"
+      },
+      "light_on_time": {
+        "name": "Light source on time"
+      },
+      "light_on_time_resettable": {
+        "name": "Light source on time (resettable)"
+      },
+      "light_voltage": {
+        "name": "Light source voltage"
+      },
+      "light_current": {
+        "name": "Light source current"
+      },
+      "light_temperature": {
+        "name": "Light source temperature"
+      },
+      "rated_life": {
+        "name": "Rated median useful life"
+      },
+      "rated_starts": {
+        "name": "Rated light source starts"
+      },
+      "line_status": {
+        "name": "DALI line {line} status",
+        "state": {
+          "ok": "OK",
+          "lowPower": "Low bus power",
+          "noPower": "No bus power",
+          "notReachable": "Not reachable"
+        }
+      },
+      "scan_status": {
+        "name": "DALI scan",
+        "state": {
+          "not_started": "Not started",
+          "cancelled": "Cancelled",
+          "done": "Done",
+          "addressing": "Addressing",
+          "in_progress": "In progress",
+          "bus_error": "Bus error"
+        }
+      },
+      "scan_progress": {
+        "name": "DALI scan progress"
+      },
+      "devices_total": {
+        "name": "DALI devices"
+      },
+      "devices_unavailable": {
+        "name": "Unreachable devices"
+      },
+      "devices_failure": {
+        "name": "Devices with failure"
+      },
+      "lights_on": {
+        "name": "Lights on"
+      }
+    },
+    "switch": {
+      "dali_ping": {
+        "name": "DALI ping"
+      },
+      "log_file": {
+        "name": "Log file"
+      },
+      "automation_sequence": {
+        "name": "Sequence {name}"
+      },
+      "automation_scheduler": {
+        "name": "Schedule {name}"
+      },
+      "automation_circadian": {
+        "name": "Circadian {name}"
+      },
+      "automation_triggerAction": {
+        "name": "Trigger action {name}"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Refresh"
+      },
+      "refresh_sensors": {
+        "name": "Refresh sensors"
+      },
+      "scan": {
+        "name": "Start DALI scan"
+      }
+    },
+    "event": {
+      "push_button": {
+        "name": "Button {instance}",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "released": "Released",
+              "pressed": "Pressed",
+              "short_press": "Short press",
+              "double_press": "Double press",
+              "long_press_start": "Long press start",
+              "long_press_repeat": "Long press repeat",
+              "long_press_stop": "Long press stop",
+              "button_free": "Button free",
+              "button_stuck": "Button stuck"
+            }
+          }
+        }
+      },
+      "occupancy_event": {
+        "name": "Occupancy {instance}",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "occupied": "Occupied",
+              "vacant": "Vacant"
+            }
+          }
+        }
+      },
+      "light_event": {
+        "name": "Light sensor {instance}"
+      },
+      "generic_event": {
+        "name": "Input {instance}"
+      }
+    }
+  },
+  "services": {
+    "recall_scene": {
+      "name": "Recall scene",
+      "description": "Recall a DALI scene (0-15).",
+      "fields": {
+        "scene": {
+          "name": "Scene",
+          "description": "Scene"
+        },
+        "transition": {
+          "name": "Transition",
+          "description": "Transition"
+        }
+      }
+    },
+    "save_scene": {
+      "name": "Save scene",
+      "description": "Store the current level/colour as DALI scene.",
+      "fields": {
+        "scene": {
+          "name": "Scene",
+          "description": "Scene"
+        }
+      }
+    },
+    "dim_up": {
+      "name": "Dim up",
+      "description": "Send DALI UP commands.",
+      "fields": {
+        "steps": {
+          "name": "Steps",
+          "description": "Steps"
+        }
+      }
+    },
+    "dim_down": {
+      "name": "Dim down",
+      "description": "Send DALI DOWN commands.",
+      "fields": {
+        "steps": {
+          "name": "Steps",
+          "description": "Steps"
+        }
+      }
+    },
+    "goto_last_active": {
+      "name": "Go to last active level",
+      "description": "Restore the last active level.",
+      "fields": {
+        "transition": {
+          "name": "Transition",
+          "description": "Transition"
+        }
+      }
+    },
+    "set_fade_time": {
+      "name": "Set fade time",
+      "description": "Configure the DALI fade time of the gear.",
+      "fields": {
+        "fade_time": {
+          "name": "Fade time",
+          "description": "Fade time"
+        }
+      }
+    },
+    "set_fade_rate": {
+      "name": "Set fade rate",
+      "description": "Configure the DALI fade rate (steps/s).",
+      "fields": {
+        "fade_rate": {
+          "name": "Fade rate",
+          "description": "Fade rate"
+        }
+      }
+    },
+    "set_color_waf": {
+      "name": "Set WAF colour",
+      "description": "Set white/amber/free colour channels.",
+      "fields": {
+        "white": {
+          "name": "White",
+          "description": "White"
+        },
+        "amber": {
+          "name": "Amber",
+          "description": "Amber"
+        },
+        "free": {
+          "name": "Free colour",
+          "description": "Free colour"
+        },
+        "brightness_pct": {
+          "name": "Brightness",
+          "description": "Brightness"
+        }
+      }
+    },
+    "send_raw_control": {
+      "name": "Send raw control",
+      "description": "Send a raw control payload (Lunatone ControlData).",
+      "fields": {
+        "data": {
+          "name": "Data",
+          "description": "Data"
+        }
+      }
+    },
+    "start_scan": {
+      "name": "Start DALI scan",
+      "description": "Search the DALI bus for devices.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Gateway",
+          "description": "Gateway"
+        },
+        "new_installation": {
+          "name": "New installation (re-address all)",
+          "description": "New installation (re-address all)"
+        },
+        "no_addressing": {
+          "name": "No addressing",
+          "description": "No addressing"
+        },
+        "lines": {
+          "name": "Lines",
+          "description": "Lines"
+        }
+      }
+    },
+    "send_dali16": {
+      "name": "Send DALI 16 bit frame",
+      "description": "Send a raw forward frame to control gear (IEC 62386-102).",
+      "fields": {
+        "config_entry_id": {
+          "name": "Gateway",
+          "description": "Gateway"
+        },
+        "line": {
+          "name": "Line",
+          "description": "Line"
+        },
+        "address": {
+          "name": "Address byte",
+          "description": "Address byte"
+        },
+        "command": {
+          "name": "Command byte",
+          "description": "Command byte"
+        }
+      }
+    },
+    "send_dali24": {
+      "name": "Send DALI 24 bit frame",
+      "description": "Send a raw forward frame to control devices (IEC 62386-103).",
+      "fields": {
+        "config_entry_id": {
+          "name": "Gateway",
+          "description": "Gateway"
+        },
+        "line": {
+          "name": "Line",
+          "description": "Line"
+        },
+        "address": {
+          "name": "Address byte",
+          "description": "Address byte"
+        },
+        "instance": {
+          "name": "Instance byte",
+          "description": "Instance byte"
+        },
+        "command": {
+          "name": "Opcode byte",
+          "description": "Opcode byte"
+        }
+      }
+    },
+    "refresh": {
+      "name": "Refresh",
+      "description": "Reload all data including energy and diagnostics.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Gateway",
+          "description": "Gateway"
+        }
+      }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "released": "Released",
+      "pressed": "Pressed",
+      "short_press": "Short press",
+      "double_press": "Double press",
+      "long_press_start": "Long press start",
+      "long_press_repeat": "Long press repeat",
+      "long_press_stop": "Long press stop",
+      "button_free": "Button free",
+      "button_stuck": "Button stuck",
+      "occupied": "Occupied",
+      "vacant": "Vacant",
+      "event": "Event"
+    }
+  }
+}

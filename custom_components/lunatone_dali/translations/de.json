@@ -1,0 +1,516 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "user": {
+        "title": "Lunatone DALI-2 IoT",
+        "description": "Wie soll das Gateway hinzugefügt werden?",
+        "menu_options": {
+          "manual": "Adresse manuell eingeben",
+          "scan": "Netzwerk durchsuchen"
+        }
+      },
+      "manual": {
+        "title": "Adresse manuell eingeben",
+        "data": {
+          "host": "Host / IP-Adresse"
+        },
+        "data_description": {
+          "host": "IP-Adresse oder Hostname des Lunatone DALI-2 IoT Gateways, z. B. 192.168.0.236"
+        }
+      },
+      "scan": {
+        "title": "Gefundene Gateways",
+        "data": {
+          "host": "Gateway"
+        }
+      },
+      "hassio_confirm": {
+        "title": "Lunatone DALI-2 IoT (über Add-on)",
+        "description": "Das Add-on DALI-2 IoT Manager hat das Gateway **{name}** unter {host} gefunden. Zu Home Assistant hinzufügen?"
+      },
+      "reconfigure": {
+        "title": "Gateway-Adresse ändern",
+        "data": {
+          "host": "Host / IP-Adresse"
+        },
+        "data_description": {
+          "host": "IP-Adresse oder Hostname des Lunatone DALI-2 IoT Gateways, z. B. 192.168.0.236"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unter dieser Adresse ist kein DALI-2 IoT Gateway erreichbar."
+    },
+    "abort": {
+      "already_configured": "Dieses Gateway ist bereits eingerichtet.",
+      "cannot_connect": "Unter dieser Adresse ist kein DALI-2 IoT Gateway erreichbar.",
+      "no_devices_found": "Im lokalen Netzwerk wurde kein DALI-2 IoT Gateway gefunden. Bitte die Adresse manuell eingeben.",
+      "wrong_device": "Das ist ein anderes Gateway.",
+      "reconfigure_successful": "Die Adresse wurde aktualisiert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optionen",
+        "data": {
+          "expose_groups": "DALI-Gruppen als Leuchten",
+          "expose_broadcast": "Broadcast (alle Leuchten) als Leuchte",
+          "learn_inputs": "Taster & Sensoren aus Bus-Events lernen",
+          "default_transition": "Standard-Überblendzeit (0 = Fadezeit des Geräts)",
+          "min_kelvin": "Wärmste Farbtemperatur",
+          "max_kelvin": "Kälteste Farbtemperatur",
+          "scan_interval": "Abfrageintervall (Fallback)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "light": {
+      "broadcast": {
+        "name": "Broadcast (alle Leuchten)"
+      },
+      "group": {
+        "name": "DALI-Gruppe {number}"
+      }
+    },
+    "binary_sensor": {
+      "lamp_failure": {
+        "name": "Lampenfehler"
+      },
+      "gear_failure": {
+        "name": "Betriebsgerätefehler"
+      },
+      "limit_error": {
+        "name": "Grenzwertfehler"
+      },
+      "power_cycle_seen": {
+        "name": "Netzunterbrechung erkannt"
+      },
+      "reset_state": {
+        "name": "Reset-Zustand"
+      },
+      "lamp_on": {
+        "name": "Lampe an"
+      },
+      "reachable": {
+        "name": "Erreichbar"
+      },
+      "websocket": {
+        "name": "Live-Verbindung"
+      },
+      "line_problem": {
+        "name": "DALI-Linie {line} Problem"
+      },
+      "diag_gear_overall_failure": {
+        "name": "Betriebsgerät Gesamtfehler"
+      },
+      "diag_undervoltage": {
+        "name": "Unterspannung Versorgung"
+      },
+      "diag_overvoltage": {
+        "name": "Überspannung Versorgung"
+      },
+      "diag_power_limitation": {
+        "name": "Leistungsbegrenzung"
+      },
+      "diag_gear_thermal_derating": {
+        "name": "Betriebsgerät thermische Reduktion"
+      },
+      "diag_gear_thermal_shutdown": {
+        "name": "Betriebsgerät Übertemperaturabschaltung"
+      },
+      "diag_light_overall_failure": {
+        "name": "Leuchtmittel Gesamtfehler"
+      },
+      "diag_short_circuit": {
+        "name": "Leuchtmittel Kurzschluss"
+      },
+      "diag_open_circuit": {
+        "name": "Leuchtmittel Leerlauf"
+      },
+      "diag_light_thermal_derating": {
+        "name": "Leuchtmittel thermische Reduktion"
+      },
+      "diag_light_thermal_shutdown": {
+        "name": "Leuchtmittel Übertemperaturabschaltung"
+      }
+    },
+    "sensor": {
+      "active_energy": {
+        "name": "Energie"
+      },
+      "active_power": {
+        "name": "Leistung"
+      },
+      "apparent_energy": {
+        "name": "Scheinenergie"
+      },
+      "apparent_power": {
+        "name": "Scheinleistung"
+      },
+      "loadside_energy": {
+        "name": "Energie lastseitig"
+      },
+      "loadside_power": {
+        "name": "Leistung lastseitig"
+      },
+      "gear_operating_time": {
+        "name": "Betriebszeit Betriebsgerät"
+      },
+      "gear_start_counter": {
+        "name": "Starts Betriebsgerät"
+      },
+      "supply_voltage": {
+        "name": "Versorgungsspannung"
+      },
+      "supply_frequency": {
+        "name": "Netzfrequenz"
+      },
+      "power_factor": {
+        "name": "Leistungsfaktor"
+      },
+      "gear_temperature": {
+        "name": "Temperatur Betriebsgerät"
+      },
+      "output_current": {
+        "name": "Ausgangsstrom"
+      },
+      "light_start_counter": {
+        "name": "Starts Leuchtmittel"
+      },
+      "light_start_counter_resettable": {
+        "name": "Starts Leuchtmittel (rücksetzbar)"
+      },
+      "light_on_time": {
+        "name": "Brenndauer Leuchtmittel"
+      },
+      "light_on_time_resettable": {
+        "name": "Brenndauer Leuchtmittel (rücksetzbar)"
+      },
+      "light_voltage": {
+        "name": "Spannung Leuchtmittel"
+      },
+      "light_current": {
+        "name": "Strom Leuchtmittel"
+      },
+      "light_temperature": {
+        "name": "Temperatur Leuchtmittel"
+      },
+      "rated_life": {
+        "name": "Nennlebensdauer"
+      },
+      "rated_starts": {
+        "name": "Nennschaltzyklen"
+      },
+      "line_status": {
+        "name": "DALI-Linie {line} Status",
+        "state": {
+          "ok": "OK",
+          "lowPower": "Geringe Busspannung",
+          "noPower": "Keine Busspannung",
+          "notReachable": "Nicht erreichbar"
+        }
+      },
+      "scan_status": {
+        "name": "DALI-Scan",
+        "state": {
+          "not_started": "Nicht gestartet",
+          "cancelled": "Abgebrochen",
+          "done": "Fertig",
+          "addressing": "Adressierung",
+          "in_progress": "Läuft",
+          "bus_error": "Busfehler"
+        }
+      },
+      "scan_progress": {
+        "name": "DALI-Scan Fortschritt"
+      },
+      "devices_total": {
+        "name": "DALI-Geräte"
+      },
+      "devices_unavailable": {
+        "name": "Nicht erreichbare Geräte"
+      },
+      "devices_failure": {
+        "name": "Geräte mit Fehler"
+      },
+      "lights_on": {
+        "name": "Eingeschaltete Leuchten"
+      }
+    },
+    "switch": {
+      "dali_ping": {
+        "name": "DALI-Ping"
+      },
+      "log_file": {
+        "name": "Logdatei"
+      },
+      "automation_sequence": {
+        "name": "Sequenz {name}"
+      },
+      "automation_scheduler": {
+        "name": "Zeitplan {name}"
+      },
+      "automation_circadian": {
+        "name": "Circadian {name}"
+      },
+      "automation_triggerAction": {
+        "name": "Trigger-Aktion {name}"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Aktualisieren"
+      },
+      "refresh_sensors": {
+        "name": "Sensoren aktualisieren"
+      },
+      "scan": {
+        "name": "DALI-Scan starten"
+      }
+    },
+    "event": {
+      "push_button": {
+        "name": "Taster {instance}",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "released": "Losgelassen",
+              "pressed": "Gedrückt",
+              "short_press": "Kurz gedrückt",
+              "double_press": "Doppelt gedrückt",
+              "long_press_start": "Langer Druck Start",
+              "long_press_repeat": "Langer Druck Wiederholung",
+              "long_press_stop": "Langer Druck Ende",
+              "button_free": "Taster frei",
+              "button_stuck": "Taster klemmt"
+            }
+          }
+        }
+      },
+      "occupancy_event": {
+        "name": "Präsenz {instance}",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "occupied": "Belegt",
+              "vacant": "Frei"
+            }
+          }
+        }
+      },
+      "light_event": {
+        "name": "Lichtsensor {instance}"
+      },
+      "generic_event": {
+        "name": "Eingang {instance}"
+      }
+    }
+  },
+  "services": {
+    "recall_scene": {
+      "name": "Szene aufrufen",
+      "description": "Ruft eine DALI-Szene (0-15) auf.",
+      "fields": {
+        "scene": {
+          "name": "Szene",
+          "description": "Szene"
+        },
+        "transition": {
+          "name": "Überblendzeit",
+          "description": "Überblendzeit"
+        }
+      }
+    },
+    "save_scene": {
+      "name": "Szene speichern",
+      "description": "Speichert den aktuellen Zustand als DALI-Szene.",
+      "fields": {
+        "scene": {
+          "name": "Szene",
+          "description": "Szene"
+        }
+      }
+    },
+    "dim_up": {
+      "name": "Heller",
+      "description": "Sendet DALI-UP-Befehle.",
+      "fields": {
+        "steps": {
+          "name": "Schritte",
+          "description": "Schritte"
+        }
+      }
+    },
+    "dim_down": {
+      "name": "Dunkler",
+      "description": "Sendet DALI-DOWN-Befehle.",
+      "fields": {
+        "steps": {
+          "name": "Schritte",
+          "description": "Schritte"
+        }
+      }
+    },
+    "goto_last_active": {
+      "name": "Letzten Wert wiederherstellen",
+      "description": "Stellt den letzten aktiven Dimmwert wieder her.",
+      "fields": {
+        "transition": {
+          "name": "Überblendzeit",
+          "description": "Überblendzeit"
+        }
+      }
+    },
+    "set_fade_time": {
+      "name": "Fadezeit setzen",
+      "description": "Setzt die DALI-Fadezeit im Betriebsgerät.",
+      "fields": {
+        "fade_time": {
+          "name": "Fadezeit",
+          "description": "Fadezeit"
+        }
+      }
+    },
+    "set_fade_rate": {
+      "name": "Faderate setzen",
+      "description": "Setzt die DALI-Faderate (Schritte/s).",
+      "fields": {
+        "fade_rate": {
+          "name": "Faderate",
+          "description": "Faderate"
+        }
+      }
+    },
+    "set_color_waf": {
+      "name": "WAF-Farbe setzen",
+      "description": "Setzt die Farbkanäle Weiß/Amber/Frei.",
+      "fields": {
+        "white": {
+          "name": "Weiß",
+          "description": "Weiß"
+        },
+        "amber": {
+          "name": "Amber",
+          "description": "Amber"
+        },
+        "free": {
+          "name": "Freie Farbe",
+          "description": "Freie Farbe"
+        },
+        "brightness_pct": {
+          "name": "Helligkeit",
+          "description": "Helligkeit"
+        }
+      }
+    },
+    "send_raw_control": {
+      "name": "Rohen Steuerbefehl senden",
+      "description": "Sendet einen rohen Steuerbefehl (Lunatone ControlData).",
+      "fields": {
+        "data": {
+          "name": "Daten",
+          "description": "Daten"
+        }
+      }
+    },
+    "start_scan": {
+      "name": "DALI-Scan starten",
+      "description": "Durchsucht den DALI-Bus nach Geräten.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Gateway",
+          "description": "Gateway"
+        },
+        "new_installation": {
+          "name": "Neuinstallation (alle neu adressieren)",
+          "description": "Neuinstallation (alle neu adressieren)"
+        },
+        "no_addressing": {
+          "name": "Ohne Adressierung",
+          "description": "Ohne Adressierung"
+        },
+        "lines": {
+          "name": "Linien",
+          "description": "Linien"
+        }
+      }
+    },
+    "send_dali16": {
+      "name": "DALI-16-Bit-Frame senden",
+      "description": "Sendet einen rohen Frame an Betriebsgeräte (IEC 62386-102).",
+      "fields": {
+        "config_entry_id": {
+          "name": "Gateway",
+          "description": "Gateway"
+        },
+        "line": {
+          "name": "Linie",
+          "description": "Linie"
+        },
+        "address": {
+          "name": "Adressbyte",
+          "description": "Adressbyte"
+        },
+        "command": {
+          "name": "Befehlsbyte",
+          "description": "Befehlsbyte"
+        }
+      }
+    },
+    "send_dali24": {
+      "name": "DALI-24-Bit-Frame senden",
+      "description": "Sendet einen rohen Frame an Steuergeräte (IEC 62386-103).",
+      "fields": {
+        "config_entry_id": {
+          "name": "Gateway",
+          "description": "Gateway"
+        },
+        "line": {
+          "name": "Linie",
+          "description": "Linie"
+        },
+        "address": {
+          "name": "Adressbyte",
+          "description": "Adressbyte"
+        },
+        "instance": {
+          "name": "Instanzbyte",
+          "description": "Instanzbyte"
+        },
+        "command": {
+          "name": "Opcode-Byte",
+          "description": "Opcode-Byte"
+        }
+      }
+    },
+    "refresh": {
+      "name": "Aktualisieren",
+      "description": "Lädt alle Daten inkl. Energie und Diagnose neu.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Gateway",
+          "description": "Gateway"
+        }
+      }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "released": "Losgelassen",
+      "pressed": "Gedrückt",
+      "short_press": "Kurz gedrückt",
+      "double_press": "Doppelt gedrückt",
+      "long_press_start": "Langer Druck Start",
+      "long_press_repeat": "Langer Druck Wiederholung",
+      "long_press_stop": "Langer Druck Ende",
+      "button_free": "Taster frei",
+      "button_stuck": "Taster klemmt",
+      "occupied": "Belegt",
+      "vacant": "Frei",
+      "event": "Ereignis"
+    }
+  }
+}

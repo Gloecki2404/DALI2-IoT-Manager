@@ -1,0 +1,18 @@
+{
+    "id": "8c2e3373-6a33-4587-9073-e1efabc6e891",
+    "progress": 100.0,
+    "found": 8,
+    "foundSensors": 0,
+    "status": "done",
+    "lines": [
+        {
+            "line": 0,
+            "scanState": "done",
+            "found": 8,
+            "foundSensors": 0,
+            "addressed": 128,
+            "scanned": 64,
+            "progress": 100.0
+        }
+    ]
+}

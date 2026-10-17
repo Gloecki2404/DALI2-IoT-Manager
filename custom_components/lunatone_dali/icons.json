@@ -1,0 +1,69 @@
+{
+  "entity": {
+    "light": {
+      "broadcast": { "default": "mdi:lightbulb-group" },
+      "group": { "default": "mdi:lightbulb-multiple" }
+    },
+    "binary_sensor": {
+      "lamp_failure": { "default": "mdi:lightbulb-alert" },
+      "gear_failure": { "default": "mdi:alert-circle-outline" },
+      "limit_error": { "default": "mdi:arrow-collapse-vertical" },
+      "power_cycle_seen": { "default": "mdi:power-cycle" },
+      "reset_state": { "default": "mdi:restore" },
+      "websocket": { "default": "mdi:lan-connect" },
+      "line_problem": { "default": "mdi:transit-connection-variant" }
+    },
+    "sensor": {
+      "line_status": { "default": "mdi:transit-connection-variant" },
+      "scan_status": { "default": "mdi:magnify-scan" },
+      "scan_progress": { "default": "mdi:progress-clock" },
+      "devices_total": { "default": "mdi:lightbulb-group-outline" },
+      "devices_unavailable": { "default": "mdi:lightbulb-off-outline" },
+      "devices_failure": { "default": "mdi:lightbulb-alert-outline" },
+      "lights_on": { "default": "mdi:lightbulb-on-outline" },
+      "gear_operating_time": { "default": "mdi:timer-outline" },
+      "light_on_time": { "default": "mdi:timer-sand" },
+      "light_on_time_resettable": { "default": "mdi:timer-sand" },
+      "gear_start_counter": { "default": "mdi:counter" },
+      "light_start_counter": { "default": "mdi:counter" },
+      "light_start_counter_resettable": { "default": "mdi:counter" },
+      "output_current": { "default": "mdi:current-dc" },
+      "rated_life": { "default": "mdi:calendar-clock" },
+      "rated_starts": { "default": "mdi:counter" }
+    },
+    "switch": {
+      "dali_ping": { "default": "mdi:access-point" },
+      "log_file": { "default": "mdi:file-document-outline" },
+      "automation_sequence": { "default": "mdi:playlist-play" },
+      "automation_scheduler": { "default": "mdi:calendar-clock" },
+      "automation_circadian": { "default": "mdi:sun-clock" },
+      "automation_triggerAction": { "default": "mdi:gesture-tap-button" }
+    },
+    "button": {
+      "refresh": { "default": "mdi:refresh" },
+      "refresh_sensors": { "default": "mdi:motion-sensor" },
+      "scan": { "default": "mdi:magnify-scan" }
+    },
+    "event": {
+      "push_button": { "default": "mdi:gesture-tap-button" },
+      "occupancy_event": { "default": "mdi:motion-sensor" },
+      "light_event": { "default": "mdi:brightness-6" },
+      "generic_event": { "default": "mdi:import" }
+    }
+  },
+  "services": {
+    "recall_scene": { "service": "mdi:palette" },
+    "save_scene": { "service": "mdi:content-save" },
+    "dim_up": { "service": "mdi:brightness-7" },
+    "dim_down": { "service": "mdi:brightness-5" },
+    "goto_last_active": { "service": "mdi:history" },
+    "set_fade_time": { "service": "mdi:timer-cog-outline" },
+    "set_fade_rate": { "service": "mdi:speedometer" },
+    "set_color_waf": { "service": "mdi:palette-swatch" },
+    "send_raw_control": { "service": "mdi:code-json" },
+    "start_scan": { "service": "mdi:magnify-scan" },
+    "send_dali16": { "service": "mdi:console" },
+    "send_dali24": { "service": "mdi:console" },
+    "refresh": { "service": "mdi:refresh" }
+  }
+}

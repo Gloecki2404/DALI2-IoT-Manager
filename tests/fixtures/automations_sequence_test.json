@@ -1,0 +1,10 @@
+{
+    "id": 0,
+    "active": false,
+    "name": "Test Sequence",
+    "enabled": true,
+    "loop": false,
+    "repeat": null,
+    "steps": [],
+    "isMacro": false
+}
