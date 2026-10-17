@@ -13,7 +13,7 @@ Voraussetzungen: Home Assistant OS oder Supervised (für das Add-on), HA 2025.1 
 
 ## Variante 0 – über GitHub (empfohlen, mit Updates per Klick)
 
-- **Add-on:** *Einstellungen → Add-ons → Add-on-Store → ⋮ → Repositories* → `https://github.com/Gloecki2404/Lunatone-Dali-Addon` hinzufügen, dann *DALI-2 IoT Manager* installieren.
+- **Add-on:** *Einstellungen → Add-ons → Add-on-Store → ⋮ → Repositories* → `https://github.com/Gloecki2404/DALI2-IoT-Manager` hinzufügen, dann *DALI-2 IoT Manager* installieren.
 - **Integration:** in HACS *⋮ → Benutzerdefinierte Repositories* → dieselbe URL, Typ *Integration* → *DALI-2 IoT Manager* herunterladen → HA neu starten.
 - Neue Versionen erscheinen danach automatisch unter *Einstellungen → Updates*.
 

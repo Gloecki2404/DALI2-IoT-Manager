@@ -2,7 +2,7 @@ name: DALI-2 IoT Manager
 version: "2.0.0"
 slug: dali2_iot_manager
 description: Verwaltung, Busmonitor und Analysen für DALI-2-Anlagen (Gateway Lunatone DALI-2 IoT)
-url: https://github.com/Gloecki2404/Lunatone-Dali-Addon
+url: https://github.com/Gloecki2404/DALI2-IoT-Manager
 arch:
   - aarch64
   - amd64

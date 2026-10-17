@@ -8,10 +8,10 @@
   "dependencies": [
     "network"
   ],
-  "documentation": "https://github.com/Gloecki2404/Lunatone-Dali-Addon",
+  "documentation": "https://github.com/Gloecki2404/DALI2-IoT-Manager",
   "integration_type": "hub",
   "iot_class": "local_push",
-  "issue_tracker": "https://github.com/Gloecki2404/Lunatone-Dali-Addon/issues",
+  "issue_tracker": "https://github.com/Gloecki2404/DALI2-IoT-Manager/issues",
   "loggers": [
     "custom_components.dali2_iot"
   ],

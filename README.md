@@ -10,9 +10,9 @@
 </p>
 
 <p align="center">
-  <a href="https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FGloecki2404%2FLunatone-Dali-Addon"><img src="https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg" alt="Add-on-Repository zu Home Assistant hinzufügen"></a>
+  <a href="https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FGloecki2404%2FDALI2-IoT-Manager"><img src="https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg" alt="Add-on-Repository zu Home Assistant hinzufügen"></a>
   &nbsp;
-  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=Gloecki2404&repository=Lunatone-Dali-Addon&category=integration"><img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Integration in HACS öffnen"></a>
+  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=Gloecki2404&repository=DALI2-IoT-Manager&category=integration"><img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Integration in HACS öffnen"></a>
 </p>
 
 ---
@@ -82,7 +82,7 @@ Voraussetzungen: Home Assistant OS oder Supervised (für das Add-on), Home Assis
 
 1. Auf den Button **„Add-on-Repository hinzufügen“** oben klicken – oder in Home Assistant *Einstellungen → Add-ons → Add-on-Store → ⋮ → Repositories* und diese URL eintragen:
    ```
-   https://github.com/Gloecki2404/Lunatone-Dali-Addon
+   https://github.com/Gloecki2404/DALI2-IoT-Manager
    ```
 2. **DALI-2 IoT Manager** installieren (das Image wird lokal gebaut, ca. 1–3 Minuten) und starten.
 3. Optional in der Add-on-Konfiguration die IP des Gateways eintragen – leer lassen = automatische Suche im Netzwerk.
