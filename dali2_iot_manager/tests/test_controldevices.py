@@ -50,7 +50,7 @@ class FakeMC:
                 value = self.bank0[self.dtr0] if self.dtr1 == 0 and self.dtr0 < len(self.bank0) else None
                 self.dtr0 += 1
                 return value
-            if cmd in (0x16, 0x17, 0x01):
+            if cmd in (0x00, 0x16, 0x17, 0x01):
                 # configuration commands only execute when received twice in a row
                 if self.last_cmd == (instance, cmd):
                     if cmd == 0x16:
@@ -71,9 +71,11 @@ class FakeMC:
                 return 0
             if cmd == 0x82:
                 return 0
-            if cmd in (0x61, 0x62):
+            if cmd == 0x61:
+                raise AssertionError("SET EVENT PRIORITY must never be sent by the add-on")
+            if cmd in (0x62, 0x63):
                 if self.last_cmd == (instance, cmd):
-                    self.instances_enabled[instance] = cmd == 0x61
+                    self.instances_enabled[instance] = cmd == 0x62
                     self.last_cmd = None
                 else:
                     self.last_cmd = (instance, cmd)

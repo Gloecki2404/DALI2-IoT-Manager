@@ -174,3 +174,41 @@ async def test_unload(hass: HomeAssistant, mock_entry, gateway_api) -> None:
     await _setup(hass, mock_entry)
     assert await hass.config_entries.async_unload(mock_entry.entry_id)
     await hass.async_block_till_done()
+
+
+async def test_sensor_events_without_address(hass: HomeAssistant, mock_entry, gateway_api) -> None:
+    """Scheme 0 events: occupancy is learned and mapped via the gateway sensor list,
+    light level reports (every second) and repeated occupancy states are ignored."""
+    from unittest.mock import AsyncMock, patch
+
+    from custom_components.dali2_iot.api import LunatoneApi
+
+    sensors = [
+        {"id": 0, "name": "Occupancy", "unit": "", "type": "occupancy", "value": 0, "timestamp": "",
+         "addressType": "dali", "daliSensorAddress": {"line": 0, "address": 0, "instanceNumber": 0}},
+        {"id": 1, "name": "Light", "unit": "lx", "type": "light", "value": 0, "timestamp": "",
+         "addressType": "dali", "daliSensorAddress": {"line": 0, "address": 0, "instanceNumber": 1}},
+    ]
+    with patch.object(LunatoneApi, "sensors", AsyncMock(return_value=sensors)):
+        await _setup(hass, mock_entry)
+    coord = mock_entry.runtime_data
+    events = []
+    hass.bus.async_listen("dali2_iot_input", events.append)
+
+    def frame(data):
+        coord.api._test_on_message({"type": "daliMonitor", "data": {"bits": 24, "line": 0, "data": data, "externalSource": True}})
+
+    frame([0x88, 0x85, 0xC0])  # light level → ignored
+    frame([0x86, 0x80, 0x0B])  # occupied + movement → learned
+    frame([0x86, 0x80, 0x0E])  # repeat of occupied → ignored
+    await hass.async_block_till_done()
+    assert list(coord.inputs) == ["0_t3_i0"]
+    assert coord.inputs["0_t3_i0"]["short_address"] == 0
+    assert coord.inputs["0_t3_i0"]["device_key"] == "0_0"
+    assert [e.data["type"] for e in events] == ["occupied"]
+    eid = _eid(hass, "event", f"{UID}_input_0_t3_i0")
+    assert hass.states.get(eid).attributes["event_type"] == "occupied"
+    # the event entity sits on the same device as the gateway's occupancy sensor
+    ent_reg = er.async_get(hass)
+    occ = ent_reg.async_get_entity_id("binary_sensor", DOMAIN, f"{UID}_sensor0")
+    assert ent_reg.async_get(eid).device_id == ent_reg.async_get(occ).device_id

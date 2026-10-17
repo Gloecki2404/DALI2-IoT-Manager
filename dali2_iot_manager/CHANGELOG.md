@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.1
+
+- **Wichtig:** Ein-/Ausschalten der Ereignismeldungen je Eingang (Reiter Direktsteuerung) hat den falschen DALI-Befehl gesendet (SET EVENT PRIORITY statt ENABLE/DISABLE INSTANCE). Korrigiert nach IEC 62386-103; „Identifizieren“ wird jetzt wie vorgeschrieben doppelt gesendet.
+- Ereignisse ohne Geräteadresse (Ereignisschema „Instanz“, z. B. bei vielen Präsenzmeldern) werden korrekt dekodiert – vorher als „Gerätegruppe“ fehlinterpretiert
+- Präsenz-Ereignisse zeigen zusätzlich Wiederholung und Sensortyp
+- Integration: lernt nur noch Taster und Präsenzmelder als Ereignisse (keine sekündlichen Helligkeitswerte), überspringt wiederholte Präsenzmeldungen und ordnet adresslose Ereignisse über die Sensorliste des Gateways dem richtigen Gerät zu
+
 ## 2.0.0
 
 - Neuer Name: **DALI-2 IoT Manager** (Add-on und Integration), nicht mehr herstellergebunden benannt

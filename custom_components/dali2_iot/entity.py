@@ -100,7 +100,7 @@ def feature_status(features: dict[str, Any], name: str, default: Any = None) -> 
 
 
 def input_device_info(
-    coordinator: LunatoneCoordinator, line: int, address: int, name: str | None = None
+    coordinator: LunatoneCoordinator, line: int, address: int | str, name: str | None = None
 ) -> DeviceInfo:
     """Device for a DALI control device (sensor / push button) on the bus."""
     return DeviceInfo(

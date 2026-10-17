@@ -214,14 +214,14 @@ DEVICE_COMMANDS: dict[int, str] = {
     0x47: "QUERY EXTENDED VERSION NUMBER",
     0x48: "QUERY RESET STATE",
     0x49: "QUERY APPLICATION CONTROLLER ALWAYS ACTIVE",
-    0x61: "ENABLE INSTANCE",
-    0x62: "DISABLE INSTANCE",
-    0x63: "SET PRIMARY INSTANCE GROUP (DTR0)",
-    0x64: "SET INSTANCE GROUP 1 (DTR0)",
-    0x65: "SET INSTANCE GROUP 2 (DTR0)",
-    0x66: "SET EVENT SCHEME (DTR0)",
-    0x67: "SET EVENT FILTER (DTR2:DTR1:DTR0)",
-    0x68: "SET EVENT PRIORITY (DTR0)",
+    0x61: "SET EVENT PRIORITY (DTR0)",
+    0x62: "ENABLE INSTANCE",
+    0x63: "DISABLE INSTANCE",
+    0x64: "SET PRIMARY INSTANCE GROUP (DTR0)",
+    0x65: "SET INSTANCE GROUP 1 (DTR0)",
+    0x66: "SET INSTANCE GROUP 2 (DTR0)",
+    0x67: "SET EVENT SCHEME (DTR0)",
+    0x68: "SET EVENT FILTER (DTR2:DTR1:DTR0)",
     0x80: "QUERY INSTANCE TYPE",
     0x81: "QUERY RESOLUTION",
     0x82: "QUERY INSTANCE ERROR",
@@ -309,14 +309,17 @@ class DaliEvent:
     @property
     def source_key(self) -> str | None:
         """Stable key identifying the sending input instance."""
-        if self.short_address is None:
-            return None
-        inst = (
-            f"i{self.instance_number}"
-            if self.instance_number is not None
-            else f"t{self.instance_type}"
-        )
-        return f"{self.line}_{self.short_address}_{inst}"
+        if self.short_address is not None:
+            inst = (
+                f"i{self.instance_number}"
+                if self.instance_number is not None
+                else f"t{self.instance_type}"
+            )
+            return f"{self.line}_{self.short_address}_{inst}"
+        if self.instance_type is not None and self.instance_number is not None:
+            # scheme "instance": no device address, only type + number
+            return f"{self.line}_t{self.instance_type}_i{self.instance_number}"
+        return None
 
     @property
     def kind(self) -> str:
@@ -348,10 +351,15 @@ def _classify_event(evt: DaliEvent) -> None:
     if evt.instance_type == 1:
         evt.event_type = BUTTON_EVENTS.get(info, f"unknown_{info}")
     elif evt.instance_type == 3:
-        # IEC 62386-303: bit0 movement, bit1 occupied
+        # IEC 62386-303: bit0 movement, bit1 occupied, bit2 repeat, bit3 presence sensor
         movement = bool(info & 0x01)
         occupied = bool(info & 0x02)
-        evt.attributes = {"movement": movement, "occupied": occupied}
+        evt.attributes = {
+            "movement": movement,
+            "occupied": occupied,
+            "repeat": bool(info & 0x04),
+            "sensor": "presence" if info & 0x08 else "movement",
+        }
         evt.event_type = "occupied" if occupied else "vacant"
     elif evt.instance_type == 4:
         evt.event_type = "illuminance"
@@ -382,18 +390,23 @@ def decode_event(line: int, data: list[int]) -> DaliEvent | None:
         evt.event_type = "power_cycle"
         evt.attributes = {"raw": data}
         return evt
+    upper_5 = (frame >> 17) & 0x1F  # bits 21..17
+    # IEC 62386-103 event addressing schemes
     if not b23:
         short = (frame >> 17) & 0x3F
-        if not b15:
-            evt = DaliEvent("instance", line, info, short_address=short, instance_type=field_5)
-        else:
-            evt = DaliEvent("device", line, info, short_address=short, instance_number=field_5)
+        if not b15:  # scheme 1 "device": short address + instance type
+            evt = DaliEvent("device", line, info, short_address=short, instance_type=field_5)
+        else:  # scheme 2 "device/instance": short address + instance number
+            evt = DaliEvent("device_instance", line, info, short_address=short, instance_number=field_5)
     elif not b22:
-        group = (frame >> 17) & 0x1F
-        evt = DaliEvent("device_group", line, info, device_group=group, instance_type=field_5)
-    else:
-        group = (frame >> 17) & 0x1F
-        evt = DaliEvent("instance_group", line, info, instance_group=group, instance_type=field_5)
+        if b15:  # scheme 0 "instance": instance type + instance number (no address)
+            evt = DaliEvent("instance", line, info, instance_type=upper_5, instance_number=field_5)
+        else:  # scheme 3 "device group": device group + instance type
+            evt = DaliEvent("device_group", line, info, device_group=upper_5, instance_type=field_5)
+    elif not b15:  # scheme 4 "instance group": instance group + instance type
+        evt = DaliEvent("instance_group", line, info, instance_group=upper_5, instance_type=field_5)
+    else:  # bits 23, 22, 15 = 1, 1, 1 are not defined as an event
+        return None
     _classify_event(evt)
     return evt
 
@@ -536,22 +549,18 @@ class DaliDecoder:
         if evt is not None:
             out["kind"] = "event"
             out["event"] = evt.as_dict()
-            src = (
-                f"D{evt.short_address}"
-                if evt.short_address is not None
-                else f"DG{evt.device_group}"
-                if evt.device_group is not None
-                else f"IG{evt.instance_group}"
-                if evt.instance_group is not None
-                else ""
-            )
-            inst = (
-                f" inst#{evt.instance_number}"
-                if evt.instance_number is not None
-                else f" {evt.kind}"
-            )
+            if evt.short_address is not None:
+                src = f"D{evt.short_address}"
+            elif evt.device_group is not None:
+                src = f"DG{evt.device_group}"
+            elif evt.instance_group is not None:
+                src = f"IG{evt.instance_group}"
+            else:  # scheme "instance": only the instance type is known
+                src = f"T{evt.instance_type}"
+            if evt.instance_number is not None:
+                src += f"#{evt.instance_number}"
             out["target"] = src
-            out["text"] = f"EVENT {src}{inst}: {evt.event_type} (info {evt.info})"
+            out["text"] = f"EVENT {src} {evt.kind}: {evt.event_type} (info {evt.info})"
             return
         a, i, c = data
         if a == 0xC1:

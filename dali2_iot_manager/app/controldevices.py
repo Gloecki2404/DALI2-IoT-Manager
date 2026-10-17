@@ -33,9 +33,9 @@ READ_MEMORY_LOCATION = 0x3C
 QUERY_APPLICATION_CONTROL_ENABLED = 0x3D
 QUERY_OPERATING_MODE = 0x3E
 QUERY_DEVICE_CAPABILITIES = 0x46
-# instance commands
-ENABLE_INSTANCE = 0x61
-DISABLE_INSTANCE = 0x62
+# instance commands (IEC 62386-103; 0x61 is SET EVENT PRIORITY)
+ENABLE_INSTANCE = 0x62
+DISABLE_INSTANCE = 0x63
 QUERY_INSTANCE_TYPE = 0x80
 QUERY_INSTANCE_ERROR = 0x82
 QUERY_INSTANCE_ENABLED = 0x86
@@ -201,7 +201,7 @@ class ControlDevices:
     async def action(self, line: int, short: int, action: str, instance: int | None = None) -> dict[str, Any]:
         a = _addr(short)
         if action == "identify":
-            frames = [_frame(a, DEVICE, IDENTIFY_DEVICE)]
+            frames = [_frame(a, DEVICE, IDENTIFY_DEVICE)] * 2  # send twice
         elif action == "enable_app":
             frames = [_frame(a, DEVICE, ENABLE_APPLICATION_CONTROLLER)] * 2  # send twice
         elif action == "disable_app":

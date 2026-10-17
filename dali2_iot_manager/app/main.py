@@ -21,7 +21,7 @@ import discovery
 from gateway import Gateway
 from history import History
 
-VERSION = "2.0.0"
+VERSION = "2.0.1"
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
 WWW_DIR = Path(os.environ.get("WWW_DIR", Path(__file__).resolve().parent.parent / "www"))
 PORT = int(os.environ.get("PORT", "8099"))

@@ -45,9 +45,14 @@ class DaliInputEvent(CoordinatorEntity[LunatoneCoordinator], EventEntity):
         meta = coordinator.inputs[key]
         self.kind = meta.get("kind", "unknown")
         line = meta.get("line", 0)
-        addr = meta.get("short_address", 0)
+        addr = meta.get("short_address")
         self._attr_unique_id = f"{coordinator.uid}_input_{key}"
-        self._attr_device_info = input_device_info(coordinator, line, addr)
+        self._attr_device_info = input_device_info(
+            coordinator,
+            line,
+            addr if addr is not None else "x",
+            name=None if addr is not None else f"DALI inputs (line {line})",
+        )
         inst = meta.get("instance_number")
         inst_label = f"#{inst}" if inst is not None else f"T{meta.get('instance_type')}"
         if self.kind == "push_button":

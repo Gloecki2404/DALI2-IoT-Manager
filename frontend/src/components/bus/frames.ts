@@ -270,14 +270,14 @@ export const DEVICE_COMMANDS: Record<number, string> = {
   0x47: "QUERY EXTENDED VERSION NUMBER",
   0x48: "QUERY RESET STATE",
   0x49: "QUERY APPLICATION CONTROLLER ALWAYS ACTIVE",
-  0x61: "ENABLE INSTANCE",
-  0x62: "DISABLE INSTANCE",
-  0x63: "SET PRIMARY INSTANCE GROUP (DTR0)",
-  0x64: "SET INSTANCE GROUP 1 (DTR0)",
-  0x65: "SET INSTANCE GROUP 2 (DTR0)",
-  0x66: "SET EVENT SCHEME (DTR0)",
-  0x67: "SET EVENT FILTER (DTR2:DTR1:DTR0)",
-  0x68: "SET EVENT PRIORITY (DTR0)",
+  0x61: "SET EVENT PRIORITY (DTR0)",
+  0x62: "ENABLE INSTANCE",
+  0x63: "DISABLE INSTANCE",
+  0x64: "SET PRIMARY INSTANCE GROUP (DTR0)",
+  0x65: "SET INSTANCE GROUP 1 (DTR0)",
+  0x66: "SET INSTANCE GROUP 2 (DTR0)",
+  0x67: "SET EVENT SCHEME (DTR0)",
+  0x68: "SET EVENT FILTER (DTR2:DTR1:DTR0)",
   0x80: "QUERY INSTANCE TYPE",
   0x81: "QUERY RESOLUTION",
   0x82: "QUERY INSTANCE ERROR",
@@ -425,7 +425,8 @@ export function describe24(a: number, i: number, c: number): Described {
   if (!(a & 0x01)) {
     // bit 16 = 0 → event frame (incl. power cycle notification 0xFE…)
     const evt = decodeEvent([a, i, c]);
-    const src = evt?.short_address != null ? `D${evt.short_address}` : evt?.device_group != null ? `DG${evt.device_group}` : evt?.instance_group != null ? `IG${evt.instance_group}` : "";
+    let src = evt?.short_address != null ? `D${evt.short_address}` : evt?.device_group != null ? `DG${evt.device_group}` : evt?.instance_group != null ? `IG${evt.instance_group}` : evt?.instance_type != null ? `T${evt.instance_type}` : "";
+    if (evt?.instance_number != null) src += `#${evt.instance_number}`;
     const name = evt?.scheme === "power_cycle" ? "POWER CYCLE NOTIFICATION" : `EVENT ${src}: info ${evt?.info ?? "?"}`;
     return { kind: "event", target: src, name, text: name, query: false };
   }
@@ -468,12 +469,20 @@ export function decodeEvent(data: number[]): DecodedEvent | null {
   const b15 = !!(frame & 0x008000);
   const f5 = (frame >> 10) & 0x1f;
   if (data[0] === 0xfe) return { scheme: "power_cycle", info, event_type: "power_cycle" };
+  // IEC 62386-103 event addressing schemes (bits 23, 22, 15)
   if (!b23) {
     const short = (frame >> 17) & 0x3f;
-    return b15 ? { scheme: "device", info, short_address: short, instance_number: f5 } : { scheme: "instance", info, short_address: short, instance_type: f5 };
+    return b15
+      ? { scheme: "device_instance", info, short_address: short, instance_number: f5 }
+      : { scheme: "device", info, short_address: short, instance_type: f5 };
   }
-  const group = (frame >> 17) & 0x1f;
-  return !b22 ? { scheme: "device_group", info, device_group: group, instance_type: f5 } : { scheme: "instance_group", info, instance_group: group, instance_type: f5 };
+  const upper = (frame >> 17) & 0x1f;
+  if (!b22) {
+    return b15
+      ? { scheme: "instance", info, instance_type: upper, instance_number: f5 }
+      : { scheme: "device_group", info, device_group: upper, instance_type: f5 };
+  }
+  return b15 ? null : { scheme: "instance_group", info, instance_group: upper, instance_type: f5 };
 }
 
 // ------------------------------------------------------------- bit breakdown
@@ -542,13 +551,24 @@ export function frameFields(f: Frame, lang: Lang): BitField[] {
       const info: [number, number, string, string] = [9, 0, de ? "Ereignisinformation" : "Event information", `${evt.info} · 0b${evt.info.toString(2).padStart(10, "0")}`];
       const typeName = (t: number | null | undefined) => (t == null ? "" : `${t} (${INSTANCE_TYPES[t]?.[lang] ?? "?"})`);
       if (evt.scheme === "power_cycle") return fieldsFor([[23, 0, de ? "Power-Cycle-Benachrichtigung" : "Power cycle notification", bytesHex(d)]]);
-      if (evt.scheme === "instance" || evt.scheme === "device") {
+      if (evt.scheme === "device" || evt.scheme === "device_instance") {
+        const byNumber = evt.scheme === "device_instance";
         return fieldsFor([
           [23, 23, de ? "Schema" : "Scheme", de ? "0 = Kurzadresse" : "0 = short address"],
           [22, 17, de ? "Kurzadresse" : "Short address", `${evt.short_address} (D${evt.short_address})`],
           [16, 16, "Frame", de ? "0 = Ereignis" : "0 = event"],
-          [15, 15, de ? "Instanz-Schema" : "Instance scheme", evt.scheme === "device" ? (de ? "1 = Instanznummer" : "1 = instance number") : de ? "0 = Instanztyp" : "0 = instance type"],
-          [14, 10, evt.scheme === "device" ? (de ? "Instanznummer" : "Instance number") : de ? "Instanztyp" : "Instance type", evt.scheme === "device" ? String(evt.instance_number) : typeName(evt.instance_type)],
+          [15, 15, de ? "Instanz-Schema" : "Instance scheme", byNumber ? (de ? "1 = Instanznummer" : "1 = instance number") : de ? "0 = Instanztyp" : "0 = instance type"],
+          [14, 10, byNumber ? (de ? "Instanznummer" : "Instance number") : de ? "Instanztyp" : "Instance type", byNumber ? String(evt.instance_number) : typeName(evt.instance_type)],
+          info,
+        ]);
+      }
+      if (evt.scheme === "instance") {
+        return fieldsFor([
+          [23, 22, de ? "Schema" : "Scheme", de ? "10 + Bit 15 = 1: Instanz (ohne Adresse)" : "10 + bit 15 = 1: instance (no address)"],
+          [21, 17, de ? "Instanztyp" : "Instance type", typeName(evt.instance_type)],
+          [16, 16, "Frame", de ? "0 = Ereignis" : "0 = event"],
+          [15, 15, "Bit 15", "1"],
+          [14, 10, de ? "Instanznummer" : "Instance number", String(evt.instance_number)],
           info,
         ]);
       }
@@ -556,7 +576,7 @@ export function frameFields(f: Frame, lang: Lang): BitField[] {
         [23, 22, de ? "Schema" : "Scheme", evt.scheme === "device_group" ? (de ? "10 = Gerätegruppe" : "10 = device group") : de ? "11 = Instanzgruppe" : "11 = instance group"],
         [21, 17, de ? "Gruppe" : "Group", String(evt.device_group ?? evt.instance_group)],
         [16, 16, "Frame", de ? "0 = Ereignis" : "0 = event"],
-        [15, 15, "Bit 15", String((((a << 16) | (i << 8) | c) >> 15) & 1)],
+        [15, 15, "Bit 15", "0"],
         [14, 10, de ? "Instanztyp" : "Instance type", typeName(evt.instance_type)],
         info,
       ]);

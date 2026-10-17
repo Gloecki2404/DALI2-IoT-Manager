@@ -45,6 +45,12 @@ _LOGGER = logging.getLogger(__name__)
 # status query. Lights only become unavailable after this grace period.
 UNAVAILABLE_GRACE = 120
 
+# Instance types learned as HA events: push buttons (301) and occupancy (303).
+# Measured values (light level, positions) arrive as gateway sensors instead –
+# a light sensor reports about once per second and would flood the recorder.
+LEARNED_INSTANCE_TYPES = {1, 3}
+SENSOR_TYPE_BY_INSTANCE = {3: "occupancy", 4: "light"}
+
 
 @dataclass
 class LunatoneData:
@@ -313,13 +319,21 @@ class LunatoneCoordinator(DataUpdateCoordinator[LunatoneData]):
         evt = decode_event(int(frame.get("line", 0)), list(frame.get("data") or []))
         if evt is None or evt.source_key is None or evt.scheme == "power_cycle":
             return
+        if evt.instance_type is not None and evt.instance_type not in LEARNED_INSTANCE_TYPES:
+            return
+        if evt.instance_type == 3 and evt.attributes.get("repeat"):
+            return  # periodic repetition of an unchanged occupancy state
         key = evt.source_key
         if key not in self.inputs:
             if not self.config_entry.options.get(CONF_LEARN_INPUTS, True):
                 return
+            short = evt.short_address
+            if short is None:
+                short = self._address_from_sensors(evt)
             self.inputs[key] = {
                 "line": evt.line,
-                "short_address": evt.short_address,
+                "short_address": short,
+                "device_key": f"{evt.line}_{short if short is not None else 'x'}",
                 "instance_type": evt.instance_type,
                 "instance_number": evt.instance_number,
                 "kind": evt.kind,
@@ -340,6 +354,27 @@ class LunatoneCoordinator(DataUpdateCoordinator[LunatoneData]):
                 **evt.as_dict(),
             },
         )
+
+    def _address_from_sensors(self, evt: Any) -> int | None:
+        """Events in scheme "instance" carry no address – look it up in the gateway's sensor list."""
+        stype = SENSOR_TYPE_BY_INSTANCE.get(evt.instance_type)
+        if self.data is None or stype is None:
+            return None
+        matches = {
+            (s.get("daliSensorAddress") or {}).get("address")
+            for s in self.data.sensors.values()
+            if s.get("addressType") == "dali"
+            and s.get("type") == stype
+            and (s.get("daliSensorAddress") or {}).get("line") == evt.line
+            and (s.get("daliSensorAddress") or {}).get("instanceNumber") == evt.instance_number
+        }
+        return matches.pop() if len(matches) == 1 else None
+
+    @staticmethod
+    def input_device_key(meta: dict[str, Any]) -> str:
+        if meta.get("device_key"):
+            return str(meta["device_key"])
+        return f"{meta.get('line', 0)}_{meta.get('short_address')}"
 
     @callback
     def remove_input(self, key: str) -> None:

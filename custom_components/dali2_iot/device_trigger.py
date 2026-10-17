@@ -35,8 +35,8 @@ def _inputs_for_device(hass: HomeAssistant, device_id: str) -> list[tuple[str, d
             prefix = f"{coord.uid}_input_"
             if domain != DOMAIN or not ident.startswith(prefix):
                 continue
-            addr = ident[len(prefix):]  # "<line>_<address>"
-            result += [(k, v) for k, v in coord.inputs.items() if k.startswith(f"{addr}_")]
+            addr = ident[len(prefix):]  # "<line>_<address>" (or "<line>_x" without address)
+            result += [(k, v) for k, v in coord.inputs.items() if coord.input_device_key(v) == addr]
     return result
 
 

@@ -179,7 +179,7 @@ async def async_remove_config_entry_device(
         prefix = f"{coord.uid}_input_"
         if ident.startswith(prefix):
             addr = ident[len(prefix):]
-            for key in [k for k in coord.inputs if k.startswith(f"{addr}_")]:
+            for key in [k for k, m in coord.inputs.items() if coord.input_device_key(m) == addr]:
                 coord.remove_input(key)
             return True
         # DALI gear still present on the gateway → keep
