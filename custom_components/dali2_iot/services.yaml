@@ -1,7 +1,7 @@
 recall_scene:
   target:
     entity:
-      integration: lunatone_dali
+      integration: dali2_iot
       domain: light
   fields:
     scene:
@@ -22,7 +22,7 @@ recall_scene:
 save_scene:
   target:
     entity:
-      integration: lunatone_dali
+      integration: dali2_iot
       domain: light
   fields:
     scene:
@@ -36,7 +36,7 @@ save_scene:
 dim_up:
   target:
     entity:
-      integration: lunatone_dali
+      integration: dali2_iot
       domain: light
   fields:
     steps:
@@ -49,7 +49,7 @@ dim_up:
 dim_down:
   target:
     entity:
-      integration: lunatone_dali
+      integration: dali2_iot
       domain: light
   fields:
     steps:
@@ -62,7 +62,7 @@ dim_down:
 goto_last_active:
   target:
     entity:
-      integration: lunatone_dali
+      integration: dali2_iot
       domain: light
   fields:
     transition:
@@ -76,7 +76,7 @@ goto_last_active:
 set_fade_time:
   target:
     entity:
-      integration: lunatone_dali
+      integration: dali2_iot
       domain: light
   fields:
     fade_time:
@@ -92,7 +92,7 @@ set_fade_time:
 set_fade_rate:
   target:
     entity:
-      integration: lunatone_dali
+      integration: dali2_iot
       domain: light
   fields:
     fade_rate:
@@ -107,7 +107,7 @@ set_fade_rate:
 set_color_waf:
   target:
     entity:
-      integration: lunatone_dali
+      integration: dali2_iot
       domain: light
   fields:
     white:
@@ -141,7 +141,7 @@ set_color_waf:
 send_raw_control:
   target:
     entity:
-      integration: lunatone_dali
+      integration: dali2_iot
       domain: light
   fields:
     data:
@@ -155,7 +155,7 @@ start_scan:
     config_entry_id:
       selector:
         config_entry:
-          integration: lunatone_dali
+          integration: dali2_iot
     new_installation:
       default: false
       selector:
@@ -173,7 +173,7 @@ send_dali16:
     config_entry_id:
       selector:
         config_entry:
-          integration: lunatone_dali
+          integration: dali2_iot
     line:
       default: 0
       selector:
@@ -201,7 +201,7 @@ send_dali24:
     config_entry_id:
       selector:
         config_entry:
-          integration: lunatone_dali
+          integration: dali2_iot
     line:
       default: 0
       selector:
@@ -236,4 +236,4 @@ refresh:
     config_entry_id:
       selector:
         config_entry:
-          integration: lunatone_dali
+          integration: dali2_iot

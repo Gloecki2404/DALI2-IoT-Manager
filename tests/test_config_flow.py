@@ -8,13 +8,13 @@ from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
-from custom_components.lunatone_dali.api import LunatoneConnectionError
-from custom_components.lunatone_dali.const import DOMAIN
+from custom_components.dali2_iot.api import LunatoneConnectionError
+from custom_components.dali2_iot.const import DOMAIN
 
 from .conftest import HOST, UID, load
 
-PROBE = "custom_components.lunatone_dali.config_flow.LunatoneApi.info"
-SETUP = "custom_components.lunatone_dali.async_setup_entry"
+PROBE = "custom_components.dali2_iot.config_flow.LunatoneApi.info"
+SETUP = "custom_components.dali2_iot.async_setup_entry"
 
 
 async def test_manual_flow(hass: HomeAssistant) -> None:
@@ -38,7 +38,7 @@ async def test_hassio_discovery(hass: HomeAssistant) -> None:
     from homeassistant.helpers.service_info.hassio import HassioServiceInfo
 
     info = HassioServiceInfo(
-        config={"host": HOST}, name="Lunatone DALI-2 IoT Manager", slug="lunatone_dali_manager", uuid="1234"
+        config={"host": HOST}, name="DALI-2 IoT Manager", slug="dali2_iot_manager", uuid="1234"
     )
     with patch(PROBE, AsyncMock(return_value=load("info.json"))):
         result = await hass.config_entries.flow.async_init(

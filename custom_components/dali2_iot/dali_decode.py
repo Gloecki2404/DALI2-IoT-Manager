@@ -5,7 +5,7 @@ websocket as ``daliMonitor`` messages into human readable descriptions and
 structured event information (push buttons, occupancy sensors, ...).
 
 This module has no Home Assistant dependencies so that it can be shared with
-the add-on (a copy lives in ``lunatone_dali_manager/app/dali_decode.py``).
+the add-on (a copy lives in ``dali2_iot_manager/app/dali_decode.py``).
 """
 
 from __future__ import annotations

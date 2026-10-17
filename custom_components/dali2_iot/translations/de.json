@@ -3,7 +3,7 @@
     "flow_title": "{name}",
     "step": {
       "user": {
-        "title": "Lunatone DALI-2 IoT",
+        "title": "DALI-2 IoT Manager",
         "description": "Wie soll das Gateway hinzugefügt werden?",
         "menu_options": {
           "manual": "Adresse manuell eingeben",
@@ -26,7 +26,7 @@
         }
       },
       "hassio_confirm": {
-        "title": "Lunatone DALI-2 IoT (über Add-on)",
+        "title": "DALI-2 IoT Manager (über Add-on)",
         "description": "Das Add-on DALI-2 IoT Manager hat das Gateway **{name}** unter {host} gefunden. Zu Home Assistant hinzufügen?"
       },
       "reconfigure": {

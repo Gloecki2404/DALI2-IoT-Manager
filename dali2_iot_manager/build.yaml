@@ -1,0 +1,6 @@
+build_from:
+  aarch64: ghcr.io/home-assistant/aarch64-base-python:3.14-alpine3.24
+  amd64: ghcr.io/home-assistant/amd64-base-python:3.14-alpine3.24
+labels:
+  org.opencontainers.image.title: "DALI-2 IoT Manager"
+  org.opencontainers.image.description: "DALI-2 IoT Manager – Home Assistant add-on for DALI-2 lighting (Lunatone DALI-2 IoT gateway)"

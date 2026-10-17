@@ -1,4 +1,4 @@
-"""Config flow for the Lunatone DALI-2 IoT integration."""
+"""Config flow for the DALI-2 IoT Manager integration."""
 
 from __future__ import annotations
 
@@ -166,7 +166,7 @@ class LunatoneConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_hassio(self, discovery_info: HassioServiceInfo) -> ConfigFlowResult:
-        """Discovery by the Lunatone DALI-2 IoT Manager add-on."""
+        """Discovery by the DALI-2 IoT Manager add-on."""
         host = discovery_info.config.get("host")
         if not host:
             return self.async_abort(reason="cannot_connect")

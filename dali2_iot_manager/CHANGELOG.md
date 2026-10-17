@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.0
+
+- Neuer Name: **DALI-2 IoT Manager** (Add-on und Integration), nicht mehr herstellergebunden benannt
+- Technische Kennungen geändert: Add-on-Slug `dali2_iot_manager`, Integrations-Domain `dali2_iot`
+- Lizenz: MIT; Lizenzhinweise der mitgelieferten Bibliotheken in `THIRD_PARTY_NOTICES.md`
+
+**Umstieg von 1.x** (nur nötig, wenn die alte Version schon installiert war):
+1. Altes Add-on „Lunatone DALI-2 IoT Manager“ deinstallieren und *DALI-2 IoT Manager* neu installieren (Verlauf/Analysen beginnen neu).
+2. Alte Integration „Lunatone DALI-2 IoT“ unter *Geräte & Dienste* löschen, den Ordner `custom_components/lunatone_dali` entfernen, *DALI-2 IoT Manager* installieren und neu einrichten. Entitäts-IDs in Automationen ggf. anpassen.
+
 ## 1.1.0
 
 - Neuer Reiter **Direktsteuerung**: findet DALI-2-Taster/-Melder (IEC 62386-103), zeigt pro Gerät, ob es ausfallsicher (Application Controller aktiv) arbeitet, und schaltet Direktmodus und Ereignismeldungen je Eingang
@@ -15,4 +25,4 @@
 - Live-Busmonitor mit IEC 62386-Dekodierung, Buslast- und Kommunikationsanalyse
 - Gateway-Automationen (Sequenzen, Zeitpläne, Circadian, Trigger-Aktionen, Event-Weiterleitung)
 - Automatische Erkennung von DALI-2-Tastern/-Meldern aus Bus-Events
-- Supervisor-Discovery für die Integration `lunatone_dali`
+- Supervisor-Discovery für die Integration `dali2_iot`

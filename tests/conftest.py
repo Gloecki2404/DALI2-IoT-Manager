@@ -1,4 +1,4 @@
-"""Shared fixtures for the lunatone_dali tests."""
+"""Shared fixtures for the dali2_iot tests."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ def auto_enable_custom_integrations(enable_custom_integrations):
 @pytest.fixture
 def mock_entry() -> MockConfigEntry:
     return MockConfigEntry(
-        domain="lunatone_dali",
+        domain="dali2_iot",
         title="DALI-2 IoT",
         unique_id=UID,
         data={"host": HOST},
@@ -39,7 +39,7 @@ def mock_entry() -> MockConfigEntry:
 @pytest.fixture
 def gateway_api():
     """Patch LunatoneApi methods with fixture data; record control calls."""
-    from custom_components.lunatone_dali.api import LunatoneApi, LunatoneNotSupported
+    from custom_components.dali2_iot.api import LunatoneApi, LunatoneNotSupported
 
     calls: list[tuple[str, int | None, dict]] = []
 

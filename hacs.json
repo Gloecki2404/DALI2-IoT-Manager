@@ -1,5 +1,5 @@
 {
-  "name": "Lunatone DALI-2 IoT",
+  "name": "DALI-2 IoT Manager",
   "homeassistant": "2025.1.0",
   "render_readme": true,
   "country": [

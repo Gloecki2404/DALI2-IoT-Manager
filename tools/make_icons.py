@@ -8,7 +8,7 @@ import pathlib
 import struct
 import zlib
 
-OUT = pathlib.Path(__file__).resolve().parents[1] / "lunatone_dali_manager"
+OUT = pathlib.Path(__file__).resolve().parents[1] / "dali2_iot_manager"
 
 
 def png(path: pathlib.Path, w: int, h: int, pixels: list[list[tuple[int, int, int, int]]]) -> None:

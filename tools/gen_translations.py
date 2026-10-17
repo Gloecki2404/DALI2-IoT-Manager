@@ -1,4 +1,4 @@
-"""Generate strings.json / translations for the lunatone_dali integration.
+"""Generate strings.json / translations for the dali2_iot integration.
 
 Run: python tools/gen_translations.py
 """
@@ -6,7 +6,7 @@ Run: python tools/gen_translations.py
 import json
 import pathlib
 
-ROOT = pathlib.Path(__file__).resolve().parents[1] / "custom_components" / "lunatone_dali"
+ROOT = pathlib.Path(__file__).resolve().parents[1] / "custom_components" / "dali2_iot"
 
 BUTTON_EV = {
     "released": ("Released", "Losgelassen"),
@@ -215,7 +215,7 @@ CONFIG = {
     ),
     "scan_title": T("Gateways found", "Gefundene Gateways"),
     "gateway": T("Gateway", "Gateway"),
-    "hassio_title": T("Lunatone DALI-2 IoT (via add-on)", "Lunatone DALI-2 IoT (über Add-on)"),
+    "hassio_title": T("DALI-2 IoT Manager (via add-on)", "DALI-2 IoT Manager (über Add-on)"),
     "hassio_desc": T(
         "The DALI-2 IoT Manager add-on found the gateway **{name}** at {host}. Add it to Home Assistant?",
         "Das Add-on DALI-2 IoT Manager hat das Gateway **{name}** unter {host} gefunden. Zu Home Assistant hinzufügen?",
@@ -262,7 +262,7 @@ def build(i: int) -> dict:
             "flow_title": c["flow_title"],
             "step": {
                 "user": {
-                    "title": "Lunatone DALI-2 IoT",
+                    "title": "DALI-2 IoT Manager",
                     "description": c["menu"],
                     "menu_options": {"manual": c["manual"], "scan": c["scan"]},
                 },

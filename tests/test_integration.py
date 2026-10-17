@@ -7,7 +7,7 @@ from homeassistant.const import STATE_OFF, STATE_ON, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
-from custom_components.lunatone_dali.const import DOMAIN
+from custom_components.dali2_iot.const import DOMAIN
 
 from .conftest import UID
 
@@ -131,7 +131,7 @@ async def test_unavailable_grace_period(hass: HomeAssistant, mock_entry, gateway
     import time as _time
 
     real = _time.monotonic()
-    with _patch("custom_components.lunatone_dali.coordinator.time.monotonic", return_value=real + 200):
+    with _patch("custom_components.dali2_iot.coordinator.time.monotonic", return_value=real + 200):
         coord.async_update_listeners()
         await hass.async_block_till_done()
         assert hass.states.get(plain).state == STATE_UNAVAILABLE
@@ -146,7 +146,7 @@ async def test_push_button_learning(hass: HomeAssistant, mock_entry, gateway_api
     await _setup(hass, mock_entry)
     coord = mock_entry.runtime_data
     events = []
-    hass.bus.async_listen("lunatone_dali_input", events.append)
+    hass.bus.async_listen("dali2_iot_input", events.append)
     frame = (5 << 17) | (1 << 10) | 0b10  # A5, push button, short press
     coord.api._test_on_message(
         {

@@ -1,7 +1,7 @@
-name: Lunatone DALI-2 IoT Manager
-version: "1.1.0"
-slug: lunatone_dali_manager
-description: Verwaltung, Busmonitor und Analysen für das Lunatone DALI-2 IoT Gateway
+name: DALI-2 IoT Manager
+version: "2.0.0"
+slug: dali2_iot_manager
+description: Verwaltung, Busmonitor und Analysen für DALI-2-Anlagen (Gateway Lunatone DALI-2 IoT)
 url: https://github.com/Gloecki2404/Lunatone-Dali-Addon
 arch:
   - aarch64
@@ -17,7 +17,7 @@ panel_title: DALI-2 IoT
 hassio_api: true
 homeassistant_api: true
 discovery:
-  - lunatone_dali
+  - dali2_iot
 options:
   gateway_host: ""
   history_days: 30

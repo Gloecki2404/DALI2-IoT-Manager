@@ -1,6 +1,6 @@
 """Tests for the DALI frame decoder (shared by add-on and integration)."""
 
-from custom_components.lunatone_dali.dali_decode import DaliDecoder, decode_event
+from custom_components.dali2_iot.dali_decode import DaliDecoder, decode_event
 
 from .conftest import load
 

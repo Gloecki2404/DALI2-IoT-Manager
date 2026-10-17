@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Final
 
-DOMAIN: Final = "lunatone_dali"
+DOMAIN: Final = "dali2_iot"
 MANUFACTURER: Final = "Lunatone"
 
 CONF_EXPOSE_GROUPS: Final = "expose_groups"

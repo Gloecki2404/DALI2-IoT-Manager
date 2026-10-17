@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="lunatone_dali_manager/logo.png" width="96" alt="Logo">
+  <img src="dali2_iot_manager/logo.png" width="96" alt="Logo">
 </p>
 
-<h1 align="center">Lunatone DALI-2 IoT für Home Assistant</h1>
+<h1 align="center">DALI-2 IoT Manager</h1>
 
 <p align="center">
-  Add-on mit kompletter Verwaltungsoberfläche + Integration mit Auto-Discovery aller DALI-Teilnehmer<br>
-  für das <b>Lunatone DALI-2 IoT</b> Gateway (getestet mit Firmware v1.17.1/1.4.6)
+  DALI-2-Lichtsteuerung für Home Assistant: Add-on mit kompletter Verwaltungsoberfläche<br>
+  + Integration mit Auto-Discovery aller DALI-Teilnehmer
 </p>
 
 <p align="center">
@@ -19,12 +19,20 @@
 
 ![Übersicht](docs/images/overview.png)
 
+## Unterstützte Gateways
+
+| Gateway | Status |
+|---------|--------|
+| Lunatone DALI-2 IoT (Firmware v1.17.1/1.4.6) | ✅ getestet |
+
+Weitere DALI-2-Gateways können später ergänzt werden.
+
 ## Was ist enthalten?
 
 | Teil | Wofür |
 |------|-------|
-| **Add-on „Lunatone DALI-2 IoT Manager“** (`lunatone_dali_manager/`) | Eigene Oberfläche in der HA-Seitenleiste für alle Einstellungen, den Busmonitor und Analysen – im HA-Design, hell/dunkel, Deutsch/Englisch, auch am Handy |
-| **Integration „Lunatone DALI-2 IoT“** (`custom_components/lunatone_dali/`) | Stellt alle DALI-Teilnehmer automatisch als Entitäten bereit – Leuchten, Gruppen, Sensoren, Taster/Melder, Energie & Diagnose, Gateway-Status |
+| **Add-on „DALI-2 IoT Manager“** (`dali2_iot_manager/`) | Eigene Oberfläche in der HA-Seitenleiste für alle Einstellungen, den Busmonitor und Analysen – im HA-Design, hell/dunkel, Deutsch/Englisch, auch am Handy |
+| **Integration „DALI-2 IoT Manager“** (`custom_components/dali2_iot/`) | Stellt alle DALI-Teilnehmer automatisch als Entitäten bereit – Leuchten, Gruppen, Sensoren, Taster/Melder, Energie & Diagnose, Gateway-Status |
 
 Beide Teile funktionieren unabhängig voneinander. Zusammen meldet das Add-on das Gateway automatisch an die Integration („Entdeckt“ unter *Geräte & Dienste*).
 
@@ -76,24 +84,24 @@ Voraussetzungen: Home Assistant OS oder Supervised (für das Add-on), Home Assis
    ```
    https://github.com/Gloecki2404/Lunatone-Dali-Addon
    ```
-2. **Lunatone DALI-2 IoT Manager** installieren (das Image wird lokal gebaut, ca. 1–3 Minuten) und starten.
+2. **DALI-2 IoT Manager** installieren (das Image wird lokal gebaut, ca. 1–3 Minuten) und starten.
 3. Optional in der Add-on-Konfiguration die IP des Gateways eintragen – leer lassen = automatische Suche im Netzwerk.
 4. *In Seitenleiste anzeigen* aktivieren → Menüpunkt **DALI-2 IoT**.
 
 ### 2. Integration (über HACS)
 
 1. Auf den Button **„In HACS öffnen“** oben klicken – oder in HACS *⋮ → Benutzerdefinierte Repositories* die URL von oben mit Typ **Integration** hinzufügen.
-2. **Lunatone DALI-2 IoT** herunterladen und Home Assistant neu starten.
+2. **DALI-2 IoT Manager** herunterladen und Home Assistant neu starten.
 3. Unter *Einstellungen → Geräte & Dienste* erscheint das Gateway als **Entdeckt** (vom Add-on gemeldet) → *Konfigurieren*.
-   Ohne Add-on: *Integration hinzufügen* → „Lunatone DALI-2 IoT“ → *Netzwerk durchsuchen* oder IP eingeben.
+   Ohne Add-on: *Integration hinzufügen* → „DALI-2 IoT Manager“ → *Netzwerk durchsuchen* oder IP eingeben.
 
-Ohne HACS: den Ordner `custom_components/lunatone_dali` nach `/config/custom_components/` kopieren und HA neu starten. Eine Anleitung für die Installation ohne GitHub (ZIP/Samba) steht in [INSTALL.md](INSTALL.md).
+Ohne HACS: den Ordner `custom_components/dali2_iot` nach `/config/custom_components/` kopieren und HA neu starten. Eine Anleitung für die Installation ohne GitHub (ZIP/Samba) steht in [INSTALL.md](INSTALL.md).
 
 ## Updates
 
 - **Add-on:** Sobald hier eine neue Version veröffentlicht ist, zeigt Home Assistant das Update im Add-on-Store bzw. unter *Einstellungen → Updates* an – ein Klick auf *Aktualisieren* genügt.
 - **Integration:** HACS meldet neue Versionen unter *Einstellungen → Updates*; nach dem Update HA neu starten.
-- Was sich geändert hat: [CHANGELOG des Add-ons](lunatone_dali_manager/CHANGELOG.md)
+- Was sich geändert hat: [CHANGELOG des Add-ons](dali2_iot_manager/CHANGELOG.md)
 
 ## Ausfallsichere Taster (Direktsteuerung)
 
@@ -112,12 +120,16 @@ Welche Gruppe welcher Taster mit welcher Funktion steuert, speichert jeder Herst
 ## Entwicklung
 
 ```bash
-# Frontend (Vue 3 + Vite) – baut nach lunatone_dali_manager/www
+# Frontend (Vue 3 + Vite) – baut nach dali2_iot_manager/www
 cd frontend && npm install && npm run build
 # Add-on-Backend lokal gegen ein Gateway starten (ohne Supervisor)
-cd lunatone_dali_manager/app && GATEWAY_HOST=<gateway-ip> DATA_DIR=/tmp/lunatone python main.py
+cd dali2_iot_manager/app && GATEWAY_HOST=<gateway-ip> DATA_DIR=/tmp/lunatone python main.py
 # Tests (Linux/WSL, Python >= 3.13)
-pip install pytest-homeassistant-custom-component && pytest tests lunatone_dali_manager/tests
+pip install pytest-homeassistant-custom-component && pytest tests dali2_iot_manager/tests
 ```
 
-Projektstruktur: `lunatone_dali_manager/` (Add-on), `custom_components/lunatone_dali/` (Integration), `frontend/` (Quellcode der Oberfläche), `tests/`, `tools/` (Übersetzungen, Icons).
+Projektstruktur: `dali2_iot_manager/` (Add-on), `custom_components/dali2_iot/` (Integration), `frontend/` (Quellcode der Oberfläche), `tests/`, `tools/` (Übersetzungen, Icons).
+
+## Lizenz
+
+[MIT](LICENSE) © 2026 Gloecki2404. Die Lizenzen der mitgelieferten Bibliotheken (Vue, Vue Router, Chart.js, Material Design Icons) stehen in [THIRD_PARTY_NOTICES.md](dali2_iot_manager/THIRD_PARTY_NOTICES.md).

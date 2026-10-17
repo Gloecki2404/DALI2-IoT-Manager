@@ -1,6 +1,6 @@
-# Lunatone DALI-2 IoT Manager
+# DALI-2 IoT Manager
 
-Verwaltungsoberfläche für das **Lunatone DALI-2 IoT** Gateway direkt in Home Assistant.
+Verwaltungsoberfläche für DALI-2-Anlagen direkt in Home Assistant. Unterstütztes Gateway: **Lunatone DALI-2 IoT**.
 
 ## Funktionen
 
@@ -24,7 +24,7 @@ Verwaltungsoberfläche für das **Lunatone DALI-2 IoT** Gateway direkt in Home A
 | `monitor_buffer` | Anzahl gespeicherter Busframes für den Busmonitor (Standard 100 000). |
 | `log_level` | Log-Ausführlichkeit. |
 
-Nach dem Verbinden meldet das Add-on das Gateway an Home Assistant – die Integration **Lunatone DALI-2 IoT** erscheint dann unter *Geräte & Dienste* als „Entdeckt“ (die Integration muss dafür nach `/config/custom_components/lunatone_dali` kopiert sein).
+Nach dem Verbinden meldet das Add-on das Gateway an Home Assistant – die Integration **DALI-2 IoT Manager** erscheint dann unter *Geräte & Dienste* als „Entdeckt“ (die Integration muss dafür nach `/config/custom_components/dali2_iot` kopiert sein).
 
 ## Daten
 

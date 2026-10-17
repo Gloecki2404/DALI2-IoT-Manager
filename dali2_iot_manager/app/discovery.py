@@ -61,7 +61,7 @@ async def announce(session: aiohttp.ClientSession, host: str) -> bool:
         async with session.post(
             f"{SUPERVISOR}/discovery",
             headers=_headers(),
-            json={"service": "lunatone_dali", "config": {"host": host}},
+            json={"service": "dali2_iot", "config": {"host": host}},
             timeout=aiohttp.ClientTimeout(total=10),
         ) as r:
             ok = r.status == 200

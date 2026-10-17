@@ -1,6 +1,6 @@
 {
-  "domain": "lunatone_dali",
-  "name": "Lunatone DALI-2 IoT",
+  "domain": "dali2_iot",
+  "name": "DALI-2 IoT Manager",
   "codeowners": [
     "@Gloecki2404"
   ],
@@ -13,8 +13,8 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/Gloecki2404/Lunatone-Dali-Addon/issues",
   "loggers": [
-    "custom_components.lunatone_dali"
+    "custom_components.dali2_iot"
   ],
   "requirements": [],
-  "version": "1.0.1"
+  "version": "2.0.0"
 }

@@ -8,8 +8,8 @@ from homeassistant.const import STATE_ON
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 
-from custom_components.lunatone_dali.api import LunatoneApi
-from custom_components.lunatone_dali.const import DOMAIN
+from custom_components.dali2_iot.api import LunatoneApi
+from custom_components.dali2_iot.const import DOMAIN
 
 from .conftest import UID
 

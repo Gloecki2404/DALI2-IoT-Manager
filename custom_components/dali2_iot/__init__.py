@@ -1,4 +1,4 @@
-"""The Lunatone DALI-2 IoT integration."""
+"""DALI-2 IoT Manager integration (gateway: Lunatone DALI-2 IoT)."""
 
 from __future__ import annotations
 

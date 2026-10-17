@@ -7,7 +7,7 @@ export default defineConfig({
   base: "./",
   plugins: [vue()],
   build: {
-    outDir: fileURLToPath(new URL("../lunatone_dali_manager/www", import.meta.url)),
+    outDir: fileURLToPath(new URL("../dali2_iot_manager/www", import.meta.url)),
     emptyOutDir: true,
     chunkSizeWarningLimit: 1500,
   },
