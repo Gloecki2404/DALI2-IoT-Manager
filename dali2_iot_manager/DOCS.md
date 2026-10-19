@@ -8,9 +8,9 @@ Verwaltungsoberfläche für DALI-2-Anlagen direkt in Home Assistant. Unterstütz
 - **Geräte** – Steuerung (Helligkeit, Farbtemperatur, Farbe), Name, Gruppen, Fadezeit/-rate, Szenen 0–15, DALI-Parameter (Min/Max/Einschalt-/Notlevel), Identifizieren
 - **Gruppen & Zonen** – Gruppen-Matrix (Geräte × 16 Gruppen), Zonen anlegen/bearbeiten
 - **Sensoren & Taster** – Gateway-Sensoren mit Verlauf, automatisch gelernte DALI-2-Eingänge
-- **Direktsteuerung** – Taster/Melder, die Leuchten direkt über den Bus steuern (auch bei Ausfall von Gateway/HA): Ausfallsicherheits-Check, Direktmodus (Application Controller) und Ereignismeldungen je Eingang schalten, mitgelesene Direktbefehle. Die Zuordnung Taster → Gruppe/Befehl ist herstellerspezifisch und wird mit dem Herstellerwerkzeug gesetzt (Lunatone: DALI Cockpit über dieses Gateway oder NFC-App).
+- **Direktsteuerung** – Taster/Melder, die Leuchten direkt über den Bus steuern (auch bei Ausfall von Gateway/HA): Ausfallsicherheits-Check, Direktmodus (Application Controller), alle genormten Einstellungen je Gerät und Eingang wie in DALI Cockpit (Zeiten, Filter, Schema, Priorität, Gruppen, Kurzadresse), Level der Leuchten bei Busausfall/Netzwiederkehr, mitgelesene Direktbefehle. Die Zuordnung Taster → Gruppe/Befehl ist herstellerspezifisch und wird mit dem Herstellerwerkzeug gesetzt (Lunatone: DALI Cockpit über dieses Gateway oder NFC-App).
 - **Automationen** – Sequenzen, Zeitpläne (inkl. Sonnenzeiten), Circadian-Verläufe, Trigger-Aktionen, Event-Weiterleitung, Statusabfragen
-- **DALI-Bus** – Live-Busmonitor mit Dekodierung nach IEC 62386, CSV-Export, Scan, Linienstatus, Rohbefehle (Expertenmodus)
+- **DALI-Bus** – Live-Busmonitor mit Dekodierung nach IEC 62386, CSV-Export, Scan (sichert und restauriert die Gerätenamen über die Seriennummer der Geräte), Linienstatus, Rohbefehle (Expertenmodus)
 - **Analysen** – Gesundheitsbericht, Buslast, Kommunikationsqualität je Adresse, Einschaltdauer & Schaltzyklen, Energie & Diagnose, Ereignisprotokoll
 - **System** – Name, Datum/Zeitzone, Standort, Einstellungen, Sicherung & Wiederherstellung, Neustart
 - **Expertenbereich** – Netzwerk, Firmware-Update, DALI-Makros, Löschen, Werksreset (mit doppelter Bestätigung)

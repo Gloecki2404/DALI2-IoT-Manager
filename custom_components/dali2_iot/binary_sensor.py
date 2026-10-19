@@ -14,10 +14,16 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import LunatoneConfigEntry
 from .coordinator import LunatoneCoordinator
-from .entity import LunatoneDeviceEntity, LunatoneEntity, LunatoneGatewaySensorEntity
+from .entity import (
+    LunatoneDeviceEntity,
+    LunatoneEntity,
+    LunatoneGatewaySensorEntity,
+    input_device_info,
+)
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -120,6 +126,11 @@ async def async_setup_entry(
             if key not in known and sensor.get("type") == "occupancy":
                 known.add(key)
                 new.append(OccupancySensor(coordinator, sid))
+        for found in coordinator.control_devices:
+            key = f"ctrl{found['line']}_{found['address']}"
+            if key not in known:
+                known.add(key)
+                new.append(FailsafeInputSensor(coordinator, found["line"], found["address"]))
         if new:
             async_add_entities(new)
 
@@ -178,8 +189,53 @@ class OccupancySensor(LunatoneGatewaySensorEntity, BinarySensorEntity):
 
     @property
     def is_on(self) -> bool | None:
+        override = self.coordinator.occupancy_override.get(self.sensor_id)
+        if override is not None:
+            return override  # from the sensor's own bus events
         value = self.sensor.get("value")
         return None if value is None else bool(value)
+
+
+class FailsafeInputSensor(CoordinatorEntity[LunatoneCoordinator], BinarySensorEntity):
+    """On when the input device switches lights itself (application controller
+    active), i.e. keeps working when the gateway fails."""
+
+    _attr_has_entity_name = True
+    _attr_translation_key = "failsafe"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator: LunatoneCoordinator, line: int, address: int) -> None:
+        super().__init__(coordinator)
+        self.line = line
+        self.address = address
+        self._attr_unique_id = f"{coordinator.uid}_input_{line}_{address}_failsafe"
+        self._attr_device_info = input_device_info(coordinator, line, address)
+
+    @property
+    def found(self) -> dict[str, Any]:
+        return self.coordinator.control_device(self.line, self.address) or {}
+
+    @property
+    def available(self) -> bool:
+        return bool(self.found)
+
+    @property
+    def is_on(self) -> bool:
+        return bool(self.found.get("app_controller_enabled"))
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        found = self.found
+        return {
+            "application_controller_present": found.get("app_controller_present"),
+            "events_to_gateway": found.get("events_to_gateway"),
+            "quiescent_mode": found.get("quiescent"),
+            "gtin": found.get("gtin"),
+            "instances": [
+                {k: inst.get(k) for k in ("number", "kind", "enabled", "event_scheme")}
+                for inst in found.get("instances", [])
+            ],
+        }
 
 
 class GatewayConnectedSensor(LunatoneEntity, BinarySensorEntity):

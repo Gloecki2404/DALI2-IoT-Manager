@@ -39,11 +39,6 @@ def gateway_device_info(coordinator: LunatoneCoordinator) -> DeviceInfo:
     )
 
 
-def dali_device_key(dev: dict[str, Any]) -> str:
-    """Stable identity of a DALI control gear (line + short address)."""
-    return f"l{dev.get('line', 0)}_a{dev.get('address', dev.get('id'))}"
-
-
 class LunatoneEntity(CoordinatorEntity[LunatoneCoordinator]):
     """Entity attached to the gateway itself."""
 
@@ -64,16 +59,21 @@ class LunatoneDeviceEntity(CoordinatorEntity[LunatoneCoordinator]):
         super().__init__(coordinator)
         self.device_id = device_id
         dev = self.device
-        ident = dali_device_key(dev)
+        # GTIN + identification number when known, so entities follow the
+        # physical gear when a DALI scan assigns new short addresses
+        ident = coordinator.device_key(dev)
         self._attr_unique_id = f"{coordinator.uid}_{ident}_{key}"
         types = dev.get("daliTypes") or []
         model = ", ".join(f"DT{t} {DALI_TYPES.get(t, '')}".strip() for t in types) or "DALI gear"
+        identity = coordinator.identity(dev)
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"{coordinator.uid}_{ident}")},
-            manufacturer="DALI",
+            manufacturer=identity.get("manufacturer") or "DALI",
             name=dev.get("name") or f"DALI {ident}",
             model=model,
             model_id=f"Line {dev.get('line', 0)} / A{dev.get('address')}",
+            serial_number=str(identity["serial"]) if identity.get("serial") else None,
+            sw_version=identity.get("firmware"),
             **via_gateway(coordinator),
         )
 
@@ -103,12 +103,15 @@ def input_device_info(
     coordinator: LunatoneCoordinator, line: int, address: int | str, name: str | None = None
 ) -> DeviceInfo:
     """Device for a DALI control device (sensor / push button) on the bus."""
+    found = coordinator.control_device(line, address) or {}
     return DeviceInfo(
         identifiers={(DOMAIN, f"{coordinator.uid}_input_{line}_{address}")},
-        manufacturer="DALI",
+        manufacturer=found.get("manufacturer") or "DALI",
         name=name or f"DALI input D{address} (line {line})",
         model="DALI-2 control device",
         model_id=f"Line {line} / D{address}",
+        serial_number=str(found["serial"]) if found.get("serial") else None,
+        sw_version=found.get("firmware"),
         **via_gateway(coordinator),
     )
 

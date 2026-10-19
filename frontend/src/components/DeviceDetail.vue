@@ -435,7 +435,9 @@ async function writeParam(p: ParamDef) {
 async function identify() {
   const d = device.value;
   if (!d) return;
-  await run(() => gw.post(`/dali/sendDali16/${d.line}`, [{ address: addrByte.value, command: 37 }]), t("identify"));
+  // IDENTIFY DEVICE must be received twice (IEC 62386-102 send-twice rule)
+  const frame = { address: addrByte.value, command: 37 };
+  await run(() => gw.post(`/dali/sendDali16/${d.line}`, [frame, frame]), t("identify"));
 }
 
 async function remove() {

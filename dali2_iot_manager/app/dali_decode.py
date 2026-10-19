@@ -11,7 +11,7 @@ the add-on (a copy lives in ``dali2_iot_manager/app/dali_decode.py``).
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 # --------------------------------------------------------------------------- #
 # IEC 62386-102 – control gear commands (16 bit forward frames)
@@ -165,6 +165,41 @@ SPECIAL_COMMANDS_16: dict[int, str] = {
     0xC9: "WRITE MEMORY LOCATION - NO REPLY",
 }
 SPECIAL_QUERIES_16 = {0xA9, 0xB9, 0xBB, 0xC7}
+ANSWERING_GEAR_COMMANDS = {197}  # READ MEMORY LOCATION (not named QUERY)
+ANSWERING_DEVICE_COMMANDS = {0x3C}  # READ MEMORY LOCATION
+ANSWERING_SPECIAL_24 = {0x03, 0x09, 0x0A, 0x20}  # COMPARE, VERIFY, QUERY SHORT ADDRESS, WRITE MEMORY
+
+
+def _initialise16(c: int) -> tuple[str, bool]:
+    """IEC 62386-102 table 18: 0x00 all gear, 0xFF gear without short address."""
+    if c == 0x00:
+        return "ALL control gear", True
+    if c == 0xFF:
+        return "gear without short address", False
+    if c & 0x81 == 0x01:
+        return f"gear A{(c >> 1) & 0x3F}", False
+    return f"0x{c:02X} (invalid)", False
+
+
+def _program_address(c: int, bits: int = 16) -> str:
+    """Parameter of PROGRAM SHORT ADDRESS. Gear (102): 0AAAAAA1; control devices
+    (103:2020 9.14.1): the plain number 0..63. 0xFF deletes the address."""
+    if c == 0xFF:
+        return "(delete short address)"
+    if bits == 24:
+        return f"D{c}" if c < 0x40 else f"0x{c:02X} (invalid)"
+    return f"A{(c >> 1) & 0x3F}" if c & 0x81 == 0x01 else f"0x{c:02X}"
+
+
+def _initialise24(c: int) -> tuple[str, bool]:
+    """IEC 62386-103 table 23: 0x7F devices without address, 0xFF ALL devices."""
+    if c == 0x7F:
+        return "devices without short address", False
+    if c == 0xFF:
+        return "ALL control devices", True
+    if c <= 0x3F:
+        return f"device D{c}", False
+    return f"0x{c:02X} (invalid)", False
 
 # --------------------------------------------------------------------------- #
 # IEC 62386-103 – control device commands (24 bit forward frames)
@@ -240,6 +275,48 @@ DEVICE_COMMANDS: dict[int, str] = {
     0x91: "QUERY EVENT FILTER 8-15",
     0x92: "QUERY EVENT FILTER 16-23",
 }
+
+# Instance commands (instance byte != 0xFE). Opcodes 0x00-0x3F depend on the
+# instance type: 0x0_ part 301, 0x1_ part 302, 0x2_ part 303, 0x3_ part 304.
+INSTANCE_COMMANDS: dict[int, str] = {
+    0x00: "SET SHORT TIMER (DTR0) [301]",
+    0x01: "SET DOUBLE TIMER (DTR0) [301]",
+    0x02: "SET REPEAT TIMER (DTR0) [301]",
+    0x03: "SET STUCK TIMER (DTR0) [301]",
+    0x0A: "QUERY SHORT TIMER [301]",
+    0x0B: "QUERY SHORT TIMER MIN [301]",
+    0x0C: "QUERY DOUBLE TIMER [301]",
+    0x0D: "QUERY DOUBLE TIMER MIN [301]",
+    0x0E: "QUERY REPEAT TIMER [301]",
+    0x0F: "QUERY STUCK TIMER [301]",
+    0x10: "SET REPORT TIMER (DTR0) [302]",
+    0x11: "SET DEADTIME TIMER (DTR0) [302]",
+    0x1D: "QUERY DEADTIME TIMER [302]",
+    0x1E: "QUERY REPORT TIMER [302]",
+    0x1F: "QUERY SWITCH [302]",
+    0x20: "CATCH MOVEMENT [303]",
+    0x21: "SET HOLD TIMER (DTR0) [303]",
+    0x22: "SET REPORT TIMER (DTR0) [303]",
+    0x23: "SET DEADTIME TIMER (DTR0) [303]",
+    0x24: "CANCEL HOLD TIMER [303]",
+    0x2C: "QUERY DEADTIME TIMER [303]",
+    0x2D: "QUERY HOLD TIMER [303]",
+    0x2E: "QUERY REPORT TIMER [303]",
+    0x2F: "QUERY CATCHING [303]",
+    0x30: "SET REPORT TIMER (DTR0) [304]",
+    0x31: "SET HYSTERESIS (DTR0) [304]",
+    0x32: "SET DEADTIME TIMER (DTR0) [304]",
+    0x33: "SET HYSTERESIS MIN (DTR0) [304]",
+    0x3C: "QUERY HYSTERESIS MIN [304]",
+    0x3D: "QUERY DEADTIME TIMER [304]",
+    0x3E: "QUERY REPORT TIMER [304]",
+    0x3F: "QUERY HYSTERESIS [304]",
+}
+for _op in range(0x40, 0x47):  # reserved in 103, used by Lunatone for scaling queries
+    INSTANCE_COMMANDS[_op] = f"MANUFACTURER SPECIFIC 0x{_op:02X} (reserved, e.g. Lunatone)"
+for _op, _name in DEVICE_COMMANDS.items():
+    if 0x61 <= _op <= 0x68 or 0x80 <= _op <= 0x92:
+        INSTANCE_COMMANDS[_op] = _name
 
 SPECIAL_COMMANDS_24: dict[int, str] = {
     0x00: "TERMINATE",
@@ -319,6 +396,10 @@ class DaliEvent:
         if self.instance_type is not None and self.instance_number is not None:
             # scheme "instance": no device address, only type + number
             return f"{self.line}_t{self.instance_type}_i{self.instance_number}"
+        if self.device_group is not None:
+            return f"{self.line}_dg{self.device_group}_t{self.instance_type}"
+        if self.instance_group is not None:
+            return f"{self.line}_ig{self.instance_group}_t{self.instance_type}"
         return None
 
     @property
@@ -351,10 +432,14 @@ def _classify_event(evt: DaliEvent) -> None:
     if evt.instance_type == 1:
         evt.event_type = BUTTON_EVENTS.get(info, f"unknown_{info}")
     elif evt.instance_type == 3:
-        # IEC 62386-303: bit0 movement, bit1 occupied, bit2 repeat, bit3 presence sensor
+        # IEC 62386-303 event information. The bit assignment (bit0 movement,
+        # bit1 occupied, bit2 repeat, bit3 presence sensor) is not verified against
+        # the norm text - movement therefore also counts as occupied and the raw
+        # value is kept (DiiA example: 0x009 = movement detected).
         movement = bool(info & 0x01)
-        occupied = bool(info & 0x02)
+        occupied = bool(info & 0x02) or movement
         evt.attributes = {
+            "raw": info,
             "movement": movement,
             "occupied": occupied,
             "repeat": bool(info & 0x04),
@@ -372,6 +457,9 @@ def _classify_event(evt: DaliEvent) -> None:
         evt.attributes = {"raw": info}
 
 
+classify_event = _classify_event
+
+
 def decode_event(line: int, data: list[int]) -> DaliEvent | None:
     """Decode a 24 bit frame as event, or return None if it is a command."""
     if len(data) != 3:
@@ -384,11 +472,17 @@ def decode_event(line: int, data: list[int]) -> DaliEvent | None:
     b22 = bool(frame & 0x400000)
     b15 = bool(frame & 0x008000)
     field_5 = (frame >> 10) & 0x1F  # bits 14..10
-    # Power cycle notification: 1111 1110 1110 0000 (0xFE, 0xE0|..)
-    if data[0] == 0xFE:
-        evt = DaliEvent("power_cycle", line, info)
+    # Power cycle notification: bits 23..13 = 0x7F7 (the only event outside the
+    # standard frame). Low bits: bit12 group valid, 11..7 group, bit6 address
+    # valid, 5..0 short address (layout as in python-dali, not norm-verified).
+    if frame & 0xFFE000 == 0xFEE000:
+        evt = DaliEvent("power_cycle", line, frame & 0x1FFF)
         evt.event_type = "power_cycle"
         evt.attributes = {"raw": data}
+        if frame & 0x1000:
+            evt.attributes["device_group"] = (frame >> 7) & 0x1F
+        if frame & 0x40:
+            evt.attributes["short_address"] = frame & 0x3F
         return evt
     upper_5 = (frame >> 17) & 0x1F  # bits 21..17
     # IEC 62386-103 event addressing schemes
@@ -441,16 +535,23 @@ def _instance24(i: int) -> str:
         return "device"
     if i == 0xFF:
         return "all instances"
-    if i <= 0x1F:
-        return f"instance {i}"
-    if (i & 0xE0) == 0x80:
-        return f"instance type {i & 0x1F}"
-    if (i & 0xE0) == 0xA0:
+    if i == 0xFD:
+        return "feature on device"
+    if i == 0xFC:
+        return "feature broadcast"
+    top = i & 0xE0
+    if top == 0x00:
+        return f"instance {i & 0x1F}"
+    if top == 0x80:
         return f"instance group {i & 0x1F}"
-    if (i & 0xE0) == 0xC0:
+    if top == 0xC0:
+        return f"instance type {i & 0x1F}"
+    if top == 0x20:
         return f"feature on instance {i & 0x1F}"
-    if (i & 0xE0) == 0x60:
-        return f"feature instance type {i & 0x1F}"
+    if top == 0xA0:
+        return f"feature on instance group {i & 0x1F}"
+    if top == 0xE0:
+        return f"feature on instance type {i & 0x1F}"
     return f"0x{i:02X}"
 
 
@@ -462,9 +563,12 @@ def level_to_percent(level: int) -> float:
 class DaliDecoder:
     """Stateful decoder – pairs answers with queries, tracks ENABLE DEVICE TYPE."""
 
-    def __init__(self) -> None:
+    def __init__(self, instance_type: Callable[[int, int, int], int | None] | None = None) -> None:
         self._last_query: dict[int, str] = {}
         self._enabled_dt: dict[int, int | None] = {}
+        # (line, short address, instance number) → instance type, for events in
+        # scheme "device/instance" which do not carry the type
+        self.instance_type = instance_type
 
     def decode(self, msg: dict[str, Any]) -> dict[str, Any]:
         """Decode the ``data`` part of a ``daliMonitor`` websocket message."""
@@ -496,9 +600,12 @@ class DaliDecoder:
                 self._decode16(line, data, out)
             elif bits == 24 and len(data) == 3:
                 self._decode24(line, data, out)
-            elif bits in (25, 32):
-                out["kind"] = "event"
-                out["text"] = "Frame " + out["hex"]
+            elif bits == 25:
+                out["kind"] = "edali"
+                out["text"] = "eDALI frame (manufacturer specific) " + out["hex"]
+            elif bits == 32:
+                out["kind"] = "reserved"
+                out["text"] = "32 bit frame (reserved) " + out["hex"]
             else:
                 out["text"] = f"{bits} bit frame {out['hex']}"
         except Exception as err:  # noqa: BLE001 – decoder must never crash
@@ -516,6 +623,15 @@ class DaliDecoder:
             if a == 0xC1:
                 self._enabled_dt[line] = c
                 name = f"ENABLE DEVICE TYPE {c}"
+            elif a == 0xA5:
+                target, _all = _initialise16(c)
+                name = f"INITIALISE {c} ({target})"
+            elif a == 0xA7:
+                name = "RANDOMISE"
+                out["warning"] = "addressing"  # new random addresses → re-addressing follows
+            elif a == 0xB7:
+                name = f"PROGRAM SHORT ADDRESS {_program_address(c)}"
+                out["warning"] = "addressing"
             elif a in (0xA3, 0xC3, 0xC5):
                 name = f"{name} = {c}"
             else:
@@ -538,7 +654,7 @@ class DaliDecoder:
             name = EXTENDED_COMMANDS.get(dt or -1, {}).get(c, f"EXTENDED COMMAND {c} (DT{dt})")
         else:
             name = GEAR_COMMANDS.get(c, f"COMMAND {c}")
-        if name.startswith("QUERY"):
+        if name.startswith("QUERY") or (c in ANSWERING_GEAR_COMMANDS and dt is None):
             out["kind"] = "query"
             self._last_query[line] = f"{label}: {name}"
         out["text"] = f"{label}: {name}"
@@ -546,6 +662,12 @@ class DaliDecoder:
     # ----------------------------------------------------------------- 24 bit
     def _decode24(self, line: int, data: list[int], out: dict[str, Any]) -> None:
         evt = decode_event(line, data)
+        if evt is not None and evt.instance_type is None and self.instance_type is not None:
+            if evt.short_address is not None and evt.instance_number is not None:
+                itype = self.instance_type(line, evt.short_address, evt.instance_number)
+                if itype is not None:
+                    evt.instance_type = itype
+                    classify_event(evt)
         if evt is not None:
             out["kind"] = "event"
             out["event"] = evt.as_dict()
@@ -566,14 +688,38 @@ class DaliDecoder:
         if a == 0xC1:
             out["kind"] = "special"
             name = SPECIAL_COMMANDS_24.get(i, f"SPECIAL 0x{i:02X}")
-            out["text"] = f"{name} {c}"
-            if i in (0x03, 0x09, 0x0A):
+            if i == 0x01:
+                target, _all = _initialise24(c)
+                out["text"] = f"{name} {c} ({target})"
+            elif i == 0x08:
+                out["text"] = f"{name} {_program_address(c, 24)}"
+                out["warning"] = "addressing"
+            else:
+                out["text"] = f"{name} {c}"
+                if i == 0x02:
+                    out["warning"] = "addressing"
+            if i in ANSWERING_SPECIAL_24:
                 self._last_query[line] = name
+            return
+        if a in (0xC5, 0xC7, 0xC9):  # IEC 62386-103 table 22 (two parameter bytes)
+            out["kind"] = "special"
+            if a == 0xC5:
+                out["text"] = f"DIRECT WRITE MEMORY offset {i} = {c}"
+                self._last_query[line] = out["text"]
+            elif a == 0xC7:
+                out["text"] = f"DTR1:DTR0 = {i}:{c}"
+            else:
+                out["text"] = f"DTR2:DTR1 = {i}:{c}"
             return
         label = _address24(a)
         out["target"] = label
-        name = DEVICE_COMMANDS.get(c, f"COMMAND 0x{c:02X}")
-        out["kind"] = "query" if name.startswith("QUERY") else "command"
+        if i == 0xFE:
+            name = DEVICE_COMMANDS.get(c, f"COMMAND 0x{c:02X}")
+            answering = name.startswith("QUERY") or c in ANSWERING_DEVICE_COMMANDS
+        else:
+            name = INSTANCE_COMMANDS.get(c, f"INSTANCE COMMAND 0x{c:02X}")
+            answering = name.startswith("QUERY")
+        out["kind"] = "query" if answering else "command"
         text = f"{label} [{_instance24(i)}]: {name}"
         if out["kind"] == "query":
             self._last_query[line] = text

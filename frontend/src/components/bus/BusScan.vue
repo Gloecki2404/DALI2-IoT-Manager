@@ -51,6 +51,7 @@
               <RouterLink to="/devices">{{ t("toDevices") }}</RouterLink>
               ·
               <RouterLink to="/sensors">{{ t("toSensors") }}</RouterLink>
+              <div v-if="lastRestore" class="mt-s">{{ t("restoredHint", { n: lastRestore.restored, m: lastRestore.missing }) }}</div>
             </div>
           </div>
 
@@ -115,6 +116,20 @@
           </button>
         </div>
 
+        <label class="keep-names mt" :class="{ off: mode === 'new' }">
+          <Toggle v-model="keepNames" :disabled="running || mode === 'new'" />
+          <span class="col">
+            <b>{{ t("keepNames") }}</b>
+            <span class="small muted">{{ mode === "new" ? t("keepNamesNew") : t("keepNamesHint") }}</span>
+          </span>
+        </label>
+        <div v-if="nameInfo?.count && !running" class="row wrap small muted names-row">
+          <span>{{ t("namesSaved", { n: nameInfo.count, t: fmtTime(nameInfo.ts) }) }}</span>
+          <button class="btn flat sm" :disabled="busy || !online" @click="restoreNames">
+            <Icon :path="mdiBackupRestore" :size="16" />{{ t("restoreNames") }}
+          </button>
+        </div>
+
         <div v-if="mode === 'new'" class="banner err mt">
           <Icon :path="mdiAlertOctagon" :size="18" />
           <div>{{ t("newWarn") }}</div>
@@ -141,6 +156,7 @@ import { computed, onActivated, onBeforeUnmount, onDeactivated, onMounted, ref, 
 import {
   mdiAlertCircle,
   mdiAlertOctagon,
+  mdiBackupRestore,
   mdiCheckCircle,
   mdiCheckboxBlankOutline,
   mdiCheckboxMarked,
@@ -156,8 +172,9 @@ import {
 } from "@mdi/js";
 import Card from "../Card.vue";
 import Icon from "../Icon.vue";
-import { gw } from "../../lib/api";
-import { confirmDialog, gatewayOnline, run, state } from "../../lib/store";
+import Toggle from "../Toggle.vue";
+import { api, gw } from "../../lib/api";
+import { confirmDialog, gatewayOnline, run, state, toast } from "../../lib/store";
 import { useT } from "../../lib/i18n";
 
 const t = useT({
@@ -184,7 +201,7 @@ const t = useT({
     started: "Scan gestartet",
     modeNormal: "Normaler Scan",
     modeNormalTag: "empfohlen",
-    modeNormalDesc: "Findet neue und unadressierte Geräte und vergibt freie Kurzadressen. Bestehende Adressen, Gruppen und Szenen bleiben erhalten.",
+    modeNormalDesc: "Findet neue und unadressierte Geräte und vergibt freie Kurzadressen. Bestehende Adressen bleiben meist erhalten – doppelt vergebene Adressen löst das Gateway aber auf, dabei können Geräte eine neue Kurzadresse bekommen.",
     modeNew: "Neuinstallation",
     modeNewTag: "destruktiv",
     modeNewDesc: "Löscht ALLE Kurzadressen und adressiert sämtliche Geräte neu. Nur bei einer komplett neuen Anlage verwenden.",
@@ -194,7 +211,7 @@ const t = useT({
     newWarn: "Achtung: Bei einer Neuinstallation erhalten alle Geräte neue Kurzadressen. Gruppen, Szenen, Zonen und Automationen, die sich auf Adressen beziehen, müssen anschließend neu eingerichtet werden.",
     generalHint: "Während des Scans ist der Bus stark ausgelastet – Schaltbefehle können verzögert ausgeführt werden. Ein Scan dauert je nach Anzahl der Geräte einige Minuten.",
     confirmTitle: "Scan starten?",
-    confirmNormal: "Der Bus wird nach neuen Geräten durchsucht ({lines}). Bestehende Adressen bleiben erhalten.",
+    confirmNormal: "Der Bus wird nach neuen Geräten durchsucht ({lines}). Einzelne Geräte können dabei eine neue Kurzadresse bekommen.",
     confirmRead: "Die adressierten Geräte werden eingelesen ({lines}). Es werden keine Adressen verändert.",
     confirmNewTitle: "Neuinstallation – alle Adressen neu vergeben?",
     confirmNew: "ALLE Geräte auf {lines} verlieren ihre Kurzadresse und werden neu adressiert. Gruppen, Szenen und Automationen können danach nicht mehr stimmen.\n\nDieser Vorgang kann nicht rückgängig gemacht werden.",
@@ -206,6 +223,15 @@ const t = useT({
     doneHint: "Scan abgeschlossen: {n} Betriebsgeräte und {s} Steuergeräte gefunden.",
     toDevices: "Zu den Geräten",
     toSensors: "Zu den Sensoren",
+    keepNames: "Gerätenamen sichern und wiederherstellen",
+    keepNamesHint: "Liest vor dem Scan die Seriennummer jedes Geräts (Speicherbank 0) und gibt danach jedem Gerät seinen Namen zurück – auch wenn es eine neue Adresse bekommen hat.",
+    keepNamesNew: "Bei einer Neuinstallation nicht möglich – die Geräte werden komplett neu eingelernt.",
+    namesSaved: "{n} Namen gesichert ({t})",
+    restoreNames: "Namen wiederherstellen",
+    backingUp: "Gerätenamen werden gesichert …",
+    backupFailed: "Gerätenamen konnten nicht gesichert werden. Scan trotzdem starten?",
+    restoredHint: "Gerätenamen wiederhergestellt: {n}, nicht gefunden: {m}.",
+    restoredToast: "{n} Gerätenamen wiederhergestellt",
     st_not_started: "Nicht gestartet",
     st_cancelled: "Abgebrochen",
     st_done: "Abgeschlossen",
@@ -243,7 +269,7 @@ const t = useT({
     started: "Scan started",
     modeNormal: "Normal scan",
     modeNormalTag: "recommended",
-    modeNormalDesc: "Finds new and unaddressed devices and assigns free short addresses. Existing addresses, groups and scenes are kept.",
+    modeNormalDesc: "Finds new and unaddressed devices and assigns free short addresses. Existing addresses are usually kept – but the gateway resolves duplicate addresses, so single devices may get a new short address.",
     modeNew: "New installation",
     modeNewTag: "destructive",
     modeNewDesc: "Deletes ALL short addresses and re-addresses every device. Only use this for a completely new installation.",
@@ -253,7 +279,7 @@ const t = useT({
     newWarn: "Warning: with a new installation every device gets a new short address. Groups, scenes, zones and automations referring to addresses must be set up again afterwards.",
     generalHint: "While scanning, the bus is heavily loaded – switching commands may be delayed. Depending on the number of devices a scan takes a few minutes.",
     confirmTitle: "Start scan?",
-    confirmNormal: "The bus will be searched for new devices ({lines}). Existing addresses are kept.",
+    confirmNormal: "The bus will be searched for new devices ({lines}). Single devices may get a new short address.",
     confirmRead: "The addressed devices will be read ({lines}). No addresses are changed.",
     confirmNewTitle: "New installation – re-address everything?",
     confirmNew: "ALL devices on {lines} lose their short address and are addressed again. Groups, scenes and automations may no longer match afterwards.\n\nThis cannot be undone.",
@@ -265,6 +291,15 @@ const t = useT({
     doneHint: "Scan finished: {n} control gear and {s} control devices found.",
     toDevices: "Go to devices",
     toSensors: "Go to sensors",
+    keepNames: "Back up and restore device names",
+    keepNamesHint: "Reads every device's serial number (memory bank 0) before the scan and gives each device its name back afterwards – even if it got a new address.",
+    keepNamesNew: "Not possible for a new installation – all devices are set up from scratch.",
+    namesSaved: "{n} names backed up ({t})",
+    restoreNames: "Restore names",
+    backingUp: "Backing up device names …",
+    backupFailed: "Device names could not be backed up. Start the scan anyway?",
+    restoredHint: "Device names restored: {n}, not found: {m}.",
+    restoredToast: "{n} device names restored",
     st_not_started: "Not started",
     st_cancelled: "Cancelled",
     st_done: "Finished",
@@ -283,6 +318,34 @@ const t = useT({
 
 const rest = ref<any>(null);
 const restAt = ref(0);
+// device names are backed up by identity (memory bank 0) and restored after the scan
+const keepNames = ref(true);
+const nameInfo = ref<any>(null);
+const lastRestore = computed(() => nameInfo.value?.last_restore && nameInfo.value.last_restore.ts * 1000 > (runningSince.value || 0) - 60000 ? nameInfo.value.last_restore : null);
+async function loadNames() {
+  try {
+    nameInfo.value = await api("GET", "names");
+  } catch {
+    nameInfo.value = null;
+  }
+}
+function fmtTime(ts: number | null | undefined) {
+  return ts ? new Date(ts * 1000).toLocaleString() : "–";
+}
+async function restoreNames() {
+  busy.value = true;
+  const res = await run(() => api("POST", "names/restore"));
+  busy.value = false;
+  if (res) toast(t("restoredToast", { n: res.restored.length }), "success");
+  await loadNames();
+}
+watch(
+  () => state.namesRestored,
+  (v) => {
+    if (v) toast(t("restoredToast", { n: v.restored.length }), v.missing ? "info" : "success", 6000);
+    loadNames();
+  },
+);
 const liveAt = ref(0);
 const loading = ref(false);
 const busy = ref(false);
@@ -388,7 +451,10 @@ function syncPolling() {
 }
 watch(running, syncPolling);
 let firstActivation = true;
-onMounted(() => load().then(syncPolling));
+onMounted(() => {
+  load().then(syncPolling);
+  loadNames();
+});
 onActivated(() => {
   active = true;
   // KeepAlive also fires this right after mount
@@ -454,6 +520,15 @@ async function startScan() {
         });
   if (!ok) return;
   busy.value = true;
+  if (keepNames.value && mode.value !== "new") {
+    toast(t("backingUp"));
+    const saved = await run(() => api("POST", "names/backup"));
+    if (!saved && !(await confirmDialog({ title: t("confirmTitle"), message: t("backupFailed"), confirmText: t("confirmStart") }))) {
+      busy.value = false;
+      return;
+    }
+    await loadNames();
+  }
   const res = await run(
     () =>
       gw.post("/dali/scan", {
@@ -490,6 +565,9 @@ async function cancel() {
 <style scoped>
 .scan-grid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); align-items: start; }
 .pad { padding: 30px 0; }
+.keep-names { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
+.keep-names.off { opacity: .6; }
+.names-row { margin-top: 6px; gap: 4px 10px; }
 .overall { display: flex; gap: 18px; align-items: center; }
 .ring {
   --p: 0; --c: var(--primary);

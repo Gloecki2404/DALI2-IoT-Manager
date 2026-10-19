@@ -86,7 +86,7 @@
                 v-for="f in visible"
                 :key="keyOf(f)"
                 class="mon-row"
-                :class="{ sel: f === selected, 'mon-grid': !narrow, mob: narrow, ext: f.external && f.kind !== 'backward', ans: f.kind === 'backward', old: f.db }"
+                :class="{ sel: f === selected, 'mon-grid': !narrow, mob: narrow, ext: f.external && f.kind !== 'backward', ans: f.kind === 'backward', old: f.db, warnrow: !!f.warning }"
                 :style="{ height: `${rowH}px` }"
                 @click="select(f)"
               >
@@ -97,7 +97,7 @@
                   <span><span class="kbadge" :style="kindStyle(f.kind)">{{ kindLabel(f.kind, lang) }}</span></span>
                   <span class="mono c-target">{{ f.target }}</span>
                   <span class="mono c-hex">{{ f.hex }}</span>
-                  <span class="c-text" :title="f.text">{{ f.text }}</span>
+                  <span class="c-text" :title="f.warning ? `${f.text} – ${t('initAllWarn')}` : f.text">{{ f.text }}</span>
                 </template>
                 <template v-else>
                   <div class="mob-l1">
@@ -108,7 +108,7 @@
                     <span class="src" :class="f.external ? 'ext' : 'gw'">{{ f.external ? "EXT" : "GW" }}</span>
                     <span class="mono small faint">{{ f.hex }}</span>
                   </div>
-                  <div class="mob-l2 small">{{ f.text }}</div>
+                  <div class="mob-l2 small" :title="f.warning ? t('initAllWarn') : undefined">{{ f.text }}</div>
                 </template>
               </div>
             </div>
@@ -207,6 +207,7 @@ const t = useT({
     onlyExternal: "Nur externe Frames",
     onlyExternalHint: "Nur Frames anderer Busteilnehmer (Taster, Sensoren, andere Steuergeräte, Antworten)",
     resetFilters: "Filter zurücksetzen",
+    initAllWarn: "Adressierung – hier werden Kurzadressen neu vergeben, Gerätenamen danach prüfen",
     pausedInfo: "Aufzeichnung pausiert – neue Frames werden nicht übernommen ({n} verworfen).",
     lineShort: "L",
     src: "Quelle",
@@ -248,6 +249,7 @@ const t = useT({
     onlyExternal: "External frames only",
     onlyExternalHint: "Only frames of other bus participants (buttons, sensors, other controllers, answers)",
     resetFilters: "Reset filters",
+    initAllWarn: "Addressing – short addresses are being assigned, check device names afterwards",
     pausedInfo: "Recording paused – new frames are not captured ({n} dropped).",
     lineShort: "L",
     src: "Source",
@@ -690,6 +692,8 @@ async function loadOlder() {
 .mon-row.sel.ext { box-shadow: inset 3px 0 0 var(--primary); }
 .mon-row.ans .c-text { color: var(--text2); }
 .mon-row.old { opacity: .82; }
+.mon-row.warnrow { box-shadow: inset 3px 0 0 var(--error); }
+.mon-row.warnrow .c-text, .mon-row.warnrow .mob-l2 { color: var(--error); }
 .mon-row > span { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .c-time { font-size: 12px; color: var(--text2); }
 .c-line { color: var(--text3); font-size: 12px; }

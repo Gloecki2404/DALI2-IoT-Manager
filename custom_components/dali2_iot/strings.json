@@ -103,6 +103,9 @@
       "line_problem": {
         "name": "DALI line {line} problem"
       },
+      "failsafe": {
+        "name": "Fail-safe direct control"
+      },
       "diag_gear_overall_failure": {
         "name": "Gear overall failure"
       },
@@ -269,6 +272,9 @@
       },
       "scan": {
         "name": "Start DALI scan"
+      },
+      "scan_control_devices": {
+        "name": "Search control devices"
       }
     },
     "event": {
@@ -403,6 +409,28 @@
         "brightness_pct": {
           "name": "Brightness",
           "description": "Brightness"
+        }
+      }
+    },
+    "set_failsafe_levels": {
+      "name": "Set fail-safe levels",
+      "description": "Store in the gear which level it takes after mains power returns and when the DALI bus fails. Works without the gateway.",
+      "fields": {
+        "power_on_level": {
+          "name": "Power-on level",
+          "description": "Power-on level"
+        },
+        "power_on_last_level": {
+          "name": "Power-on: keep last level",
+          "description": "Power-on: keep last level"
+        },
+        "system_failure_level": {
+          "name": "System failure level",
+          "description": "System failure level"
+        },
+        "system_failure_last_level": {
+          "name": "System failure: keep current level",
+          "description": "System failure: keep current level"
         }
       }
     },

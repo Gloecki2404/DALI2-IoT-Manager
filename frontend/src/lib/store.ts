@@ -61,6 +61,7 @@ export interface MonitorFrame {
   text: string;
   event?: any;
   answer_to?: string;
+  warning?: string;
 }
 
 export interface AddonEvent {
@@ -81,6 +82,7 @@ export const state = reactive({
   sensors: {} as Record<number, Sensor>,
   scan: null as any,
   monitor: [] as MonitorFrame[],
+  namesRestored: null as null | { restored: any[]; missing: number; at: number },
   events: [] as AddonEvent[],
   expert: false,
   loaded: false,
@@ -175,6 +177,9 @@ function handle(msg: any) {
         state.monitor.push(data);
         if (state.monitor.length > MONITOR_MAX) state.monitor.splice(0, state.monitor.length - MONITOR_MAX);
       }
+      break;
+    case "names_restored":
+      state.namesRestored = { ...data, at: Date.now() };
       break;
     case "addon_event":
       state.events.unshift(data);

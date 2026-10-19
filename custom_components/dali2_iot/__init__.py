@@ -149,6 +149,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: LunatoneConfigEntry) -> 
     coordinator.gateway_device_id = gateway.id
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     coordinator.start_websocket()
+    coordinator.start_bus_tasks()
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True
 
@@ -184,6 +185,6 @@ async def async_remove_config_entry_device(
             return True
         # DALI gear still present on the gateway → keep
         for dev in coord.data.devices.values():
-            if ident == f"{coord.uid}_l{dev.get('line', 0)}_a{dev.get('address')}":
+            if ident == f"{coord.uid}_{coord.device_key(dev)}":
                 return False
     return True

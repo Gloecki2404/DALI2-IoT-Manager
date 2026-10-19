@@ -18,6 +18,7 @@ from homeassistant.components.light import (
     LightEntityFeature,
 )
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -31,6 +32,7 @@ from .const import (
     DEFAULT_MAX_KELVIN,
     DEFAULT_MIN_KELVIN,
 )
+from .bus import MASK, level_to_pct, pct_to_level
 from .coordinator import LunatoneCoordinator
 from .entity import LunatoneDeviceEntity, LunatoneEntity, feature_status
 
@@ -56,6 +58,12 @@ SERVICE_SCHEMAS: dict[str, dict[Any, Any]] = {
         vol.Optional("brightness_pct"): vol.All(vol.Coerce(float), vol.Range(0, 100)),
     },
     "send_raw_control": {vol.Required("data"): dict},
+    "set_failsafe_levels": {
+        vol.Optional("power_on_level"): vol.All(vol.Coerce(float), vol.Range(0, 100)),
+        vol.Optional("power_on_last_level", default=False): cv.boolean,
+        vol.Optional("system_failure_level"): vol.All(vol.Coerce(float), vol.Range(0, 100)),
+        vol.Optional("system_failure_last_level", default=False): cv.boolean,
+    },
 }
 
 
@@ -341,6 +349,9 @@ class _DaliLightMixin:
     async def async_service_send_raw_control(self, data: dict[str, Any]) -> None:
         await self._send(data)
 
+    async def async_service_set_failsafe_levels(self, **kwargs: Any) -> None:
+        raise HomeAssistantError("Fail-safe levels can only be set for single DALI lights")
+
 
 class DaliDeviceLight(LunatoneDeviceEntity, _DaliLightMixin, LightEntity):
     """A single DALI control gear."""
@@ -365,6 +376,7 @@ class DaliDeviceLight(LunatoneDeviceEntity, _DaliLightMixin, LightEntity):
         dev = self.device
         feats = self.features
         status = dev.get("status") or {}
+        levels = self.coordinator.failsafe_levels(dev)
         return {
             "dali_line": dev.get("line"),
             "dali_address": dev.get("address"),
@@ -376,7 +388,29 @@ class DaliDeviceLight(LunatoneDeviceEntity, _DaliLightMixin, LightEntity):
             "lamp_on": status.get("lampOn"),
             "fade_running": status.get("fadeRunning"),
             "status_raw": status.get("raw"),
+            # behaviour without the gateway (stored in the gear itself)
+            "power_on_level": level_to_pct(levels.get("power_on_level")),
+            "system_failure_level": level_to_pct(levels.get("system_failure_level")),
         }
+
+    async def async_service_set_failsafe_levels(
+        self,
+        power_on_level: float | None = None,
+        power_on_last_level: bool = False,
+        system_failure_level: float | None = None,
+        system_failure_last_level: bool = False,
+    ) -> None:
+        power_on = MASK if power_on_last_level else None if power_on_level is None else pct_to_level(power_on_level)
+        failure = (
+            MASK
+            if system_failure_last_level
+            else None
+            if system_failure_level is None
+            else pct_to_level(system_failure_level)
+        )
+        if power_on is None and failure is None:
+            raise HomeAssistantError("Nothing to set")
+        await self.coordinator.async_set_failsafe(self.device_id, power_on, failure)
 
 
 class DaliZoneLight(LunatoneEntity, _DaliLightMixin, LightEntity):

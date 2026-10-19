@@ -12,7 +12,7 @@ export interface Frame extends MonitorFrame {
 }
 
 // ------------------------------------------------------------------ kinds
-export const KINDS = ["command", "query", "backward", "dapc", "event", "special", "unknown"] as const;
+export const KINDS = ["command", "query", "backward", "dapc", "event", "special", "edali", "unknown"] as const;
 
 export const KIND_META: Record<string, { color: string; de: string; en: string; hintDe: string; hintEn: string }> = {
   command: { color: "#1e88e5", de: "Befehl", en: "Command", hintDe: "Vorwärtsframe: Steuer- oder Konfigurationsbefehl", hintEn: "Forward frame: control or configuration command" },
@@ -21,6 +21,8 @@ export const KIND_META: Record<string, { color: string; de: string; en: string; 
   dapc: { color: "#0097a7", de: "DAPC", en: "DAPC", hintDe: "Direct Arc Power Control – direkter Dimmwert", hintEn: "Direct arc power control – direct dim level" },
   event: { color: "#ef6c00", de: "Ereignis", en: "Event", hintDe: "Ereignis eines Eingabegeräts (Taster, Sensor)", hintEn: "Event of an input device (button, sensor)" },
   special: { color: "#d81b60", de: "Spezial", en: "Special", hintDe: "Spezialbefehl (DTR, Initialisierung, Adressierung …)", hintEn: "Special command (DTR, initialisation, addressing …)" },
+  edali: { color: "#6d4c41", de: "eDALI", en: "eDALI", hintDe: "25-Bit-Frame (eDALI, herstellerspezifisch)", hintEn: "25 bit frame (eDALI, manufacturer specific)" },
+  reserved: { color: "#546e7a", de: "Reserviert", en: "Reserved", hintDe: "32-Bit-Frame (in IEC 62386 reserviert)", hintEn: "32 bit frame (reserved in IEC 62386)" },
   unknown: { color: "#78909c", de: "Unbekannt", en: "Unknown", hintDe: "Nicht dekodierbarer Frame", hintEn: "Frame that could not be decoded" },
 };
 
@@ -297,6 +299,74 @@ export const DEVICE_COMMANDS: Record<number, string> = {
   0x92: "QUERY EVENT FILTER 16-23",
 };
 
+// Instance commands (instance byte != 0xFE). 0x00-0x3F depend on the instance
+// type: 0x0_ IEC 62386-301, 0x1_ 302, 0x2_ 303, 0x3_ 304.
+export const INSTANCE_COMMANDS: Record<number, string> = {
+  0x00: "SET SHORT TIMER (DTR0) [301]",
+  0x01: "SET DOUBLE TIMER (DTR0) [301]",
+  0x02: "SET REPEAT TIMER (DTR0) [301]",
+  0x03: "SET STUCK TIMER (DTR0) [301]",
+  0x0a: "QUERY SHORT TIMER [301]",
+  0x0b: "QUERY SHORT TIMER MIN [301]",
+  0x0c: "QUERY DOUBLE TIMER [301]",
+  0x0d: "QUERY DOUBLE TIMER MIN [301]",
+  0x0e: "QUERY REPEAT TIMER [301]",
+  0x0f: "QUERY STUCK TIMER [301]",
+  0x10: "SET REPORT TIMER (DTR0) [302]",
+  0x11: "SET DEADTIME TIMER (DTR0) [302]",
+  0x1d: "QUERY DEADTIME TIMER [302]",
+  0x1e: "QUERY REPORT TIMER [302]",
+  0x1f: "QUERY SWITCH [302]",
+  0x20: "CATCH MOVEMENT [303]",
+  0x21: "SET HOLD TIMER (DTR0) [303]",
+  0x22: "SET REPORT TIMER (DTR0) [303]",
+  0x23: "SET DEADTIME TIMER (DTR0) [303]",
+  0x24: "CANCEL HOLD TIMER [303]",
+  0x2c: "QUERY DEADTIME TIMER [303]",
+  0x2d: "QUERY HOLD TIMER [303]",
+  0x2e: "QUERY REPORT TIMER [303]",
+  0x2f: "QUERY CATCHING [303]",
+  0x30: "SET REPORT TIMER (DTR0) [304]",
+  0x31: "SET HYSTERESIS (DTR0) [304]",
+  0x32: "SET DEADTIME TIMER (DTR0) [304]",
+  0x33: "SET HYSTERESIS MIN (DTR0) [304]",
+  0x3c: "QUERY HYSTERESIS MIN [304]",
+  0x3d: "QUERY DEADTIME TIMER [304]",
+  0x3e: "QUERY REPORT TIMER [304]",
+  0x3f: "QUERY HYSTERESIS [304]",
+};
+for (let op = 0x40; op <= 0x46; op++) INSTANCE_COMMANDS[op] = `MANUFACTURER SPECIFIC 0x${hex2(op)} (reserved, e.g. Lunatone)`;
+for (const [op, name] of Object.entries(DEVICE_COMMANDS)) {
+  const n = Number(op);
+  if ((n >= 0x61 && n <= 0x68) || (n >= 0x80 && n <= 0x92)) INSTANCE_COMMANDS[n] = name;
+}
+
+const ANSWERING_SPECIAL_24 = new Set([0x03, 0x09, 0x0a, 0x20]);
+
+/** INITIALISE parameter, IEC 62386-102 (16 bit): 0x00 all gear, 0xFF gear without address. */
+function initialise16(c: number): [string, boolean] {
+  if (c === 0x00) return ["ALL control gear", true];
+  if (c === 0xff) return ["gear without short address", false];
+  if ((c & 0x81) === 0x01) return [`gear A${(c >> 1) & 0x3f}`, false];
+  return [`0x${hex2(c)} (invalid)`, false];
+}
+
+/** PROGRAM SHORT ADDRESS parameter. Gear (102): 0AAAAAA1; control devices
+ * (103:2020 9.14.1): the plain number 0..63. 0xFF deletes the address. */
+function programAddress(c: number, bits = 16): string {
+  if (c === 0xff) return "(delete short address)";
+  if (bits === 24) return c < 0x40 ? `D${c}` : `0x${hex2(c)} (invalid)`;
+  return (c & 0x81) === 0x01 ? `A${(c >> 1) & 0x3f}` : `0x${hex2(c)}`;
+}
+
+/** INITIALISE parameter, IEC 62386-103 (24 bit): 0x7F devices without address, 0xFF all devices. */
+function initialise24(c: number): [string, boolean] {
+  if (c === 0x7f) return ["devices without short address", false];
+  if (c === 0xff) return ["ALL control devices", true];
+  if (c <= 0x3f) return [`device D${c}`, false];
+  return [`0x${hex2(c)} (invalid)`, false];
+}
+
 export const SPECIAL_COMMANDS_24: Record<number, string> = {
   0x00: "TERMINATE",
   0x01: "INITIALISE",
@@ -352,11 +422,17 @@ export function levelPct(v: number): string {
 function instance24(i: number): string {
   if (i === 0xfe) return "device";
   if (i === 0xff) return "all instances";
-  if (i <= 0x1f) return `instance ${i}`;
-  if ((i & 0xe0) === 0x80) return `instance type ${i & 0x1f}`;
-  if ((i & 0xe0) === 0xa0) return `instance group ${i & 0x1f}`;
-  if ((i & 0xe0) === 0xc0) return `feature on instance ${i & 0x1f}`;
-  if ((i & 0xe0) === 0x60) return `feature instance type ${i & 0x1f}`;
+  if (i === 0xfd) return "feature on device";
+  if (i === 0xfc) return "feature broadcast";
+  const n = i & 0x1f;
+  switch (i & 0xe0) {
+    case 0x00: return `instance ${n}`;
+    case 0x80: return `instance group ${n}`;
+    case 0xc0: return `instance type ${n}`;
+    case 0x20: return `feature on instance ${n}`;
+    case 0xa0: return `feature on instance group ${n}`;
+    case 0xe0: return `feature on instance type ${n}`;
+  }
   return `0x${hex2(i)}`;
 }
 
@@ -382,6 +458,8 @@ export interface Described {
   name: string;
   text: string;
   query: boolean;
+  /** "addressing": RANDOMISE / PROGRAM SHORT ADDRESS – short addresses are (re)assigned */
+  warning?: string;
 }
 
 /** Description of a 16 bit forward frame (as the add-on decoder does it); dt = device type enabled before. */
@@ -389,10 +467,18 @@ export function describe16(a: number, c: number, dt?: number | null): Described 
   const { kind, label } = address16Label(a);
   if (kind === "special" || (a & 0x01 && a >= 0xa0 && a <= 0xcb)) {
     let name = SPECIAL_COMMANDS_16[a] || `SPECIAL 0x${hex2(a)}`;
+    let warning: string | undefined;
     if (a === 0xc1) name = `ENABLE DEVICE TYPE ${c}`;
-    else if (a === 0xa3 || a === 0xc3 || a === 0xc5) name = `${name} = ${c}`;
+    else if (a === 0xa5) name = `INITIALISE ${c} (${initialise16(c)[0]})`;
+    else if (a === 0xa7) {
+      name = "RANDOMISE";
+      warning = "addressing";
+    } else if (a === 0xb7) {
+      name = `PROGRAM SHORT ADDRESS ${programAddress(c)}`;
+      warning = "addressing";
+    } else if (a === 0xa3 || a === 0xc3 || a === 0xc5) name = `${name} = ${c}`;
     else name = `${name} ${c}`;
-    return { kind: "special", target: "", name, text: name, query: SPECIAL_QUERIES_16.has(a) };
+    return { kind: "special", target: "", name, text: name, query: SPECIAL_QUERIES_16.has(a), warning };
   }
   if (!(a & 0x01)) {
     const name = c === 0xff ? "DAPC MASK (stop fading)" : `DAPC ${c} (${levelPct(c)})`;
@@ -402,7 +488,8 @@ export function describe16(a: number, c: number, dt?: number | null): Described 
     c >= 224
       ? EXTENDED_COMMANDS[dt ?? -1]?.[c] || `EXTENDED COMMAND ${c}${dt != null ? ` (DT${dt})` : ""}`
       : GEAR_COMMANDS[c] || `COMMAND ${c}`;
-  const query = name.startsWith("QUERY");
+  // READ MEMORY LOCATION (197) answers although it is not named QUERY
+  const query = name.startsWith("QUERY") || (c === 197 && dt == null);
   return { kind: query ? "query" : "command", target: label, name, text: `${label}: ${name}`, query };
 }
 
@@ -431,12 +518,21 @@ export function describe24(a: number, i: number, c: number): Described {
     return { kind: "event", target: src, name, text: name, query: false };
   }
   if (a === 0xc1) {
-    const name = `${SPECIAL_COMMANDS_24[i] || `SPECIAL 0x${hex2(i)}`} ${c}`;
-    return { kind: "special", target: "", name, text: name, query: [0x03, 0x09, 0x0a].includes(i) };
+    let name = `${SPECIAL_COMMANDS_24[i] || `SPECIAL 0x${hex2(i)}`} ${c}`;
+    let warning: string | undefined;
+    if (i === 0x01) name += ` (${initialise24(c)[0]})`;
+    else if (i === 0x08) name = `PROGRAM SHORT ADDRESS ${programAddress(c, 24)}`;
+    if (i === 0x02 || i === 0x08) warning = "addressing";
+    return { kind: "special", target: "", name, text: name, query: ANSWERING_SPECIAL_24.has(i), warning };
+  }
+  if (a === 0xc5 || a === 0xc7 || a === 0xc9) {
+    // IEC 62386-103 special commands with two parameter bytes
+    const name = a === 0xc5 ? `DIRECT WRITE MEMORY offset ${i} = ${c}` : a === 0xc7 ? `DTR1:DTR0 = ${i}:${c}` : `DTR2:DTR1 = ${i}:${c}`;
+    return { kind: "special", target: "", name, text: name, query: a === 0xc5 };
   }
   const label = address24Label(a);
-  const name = DEVICE_COMMANDS[c] || `COMMAND 0x${hex2(c)}`;
-  const query = name.startsWith("QUERY");
+  const name = i === 0xfe ? DEVICE_COMMANDS[c] || `COMMAND 0x${hex2(c)}` : INSTANCE_COMMANDS[c] || `INSTANCE COMMAND 0x${hex2(c)}`;
+  const query = name.startsWith("QUERY") || (i === 0xfe && c === 0x3c);
   return { kind: query ? "query" : "command", target: label, name, text: `${label} [${instance24(i)}]: ${name}`, query };
 }
 
@@ -468,7 +564,14 @@ export function decodeEvent(data: number[]): DecodedEvent | null {
   const b22 = !!(frame & 0x400000);
   const b15 = !!(frame & 0x008000);
   const f5 = (frame >> 10) & 0x1f;
-  if (data[0] === 0xfe) return { scheme: "power_cycle", info, event_type: "power_cycle" };
+  // power cycle notification: bits 23..13 = 0x7F7; bit 12 group valid (11..7),
+  // bit 6 address valid (5..0) - layout as in python-dali
+  if ((frame & 0xffe000) === 0xfee000) {
+    const attributes: Record<string, number> = {};
+    if (frame & 0x1000) attributes.device_group = (frame >> 7) & 0x1f;
+    if (frame & 0x40) attributes.short_address = frame & 0x3f;
+    return { scheme: "power_cycle", info: frame & 0x1fff, event_type: "power_cycle", attributes };
+  }
   // IEC 62386-103 event addressing schemes (bits 23, 22, 15)
   if (!b23) {
     const short = (frame >> 17) & 0x3f;
@@ -550,7 +653,16 @@ export function frameFields(f: Frame, lang: Lang): BitField[] {
     if (evt) {
       const info: [number, number, string, string] = [9, 0, de ? "Ereignisinformation" : "Event information", `${evt.info} · 0b${evt.info.toString(2).padStart(10, "0")}`];
       const typeName = (t: number | null | undefined) => (t == null ? "" : `${t} (${INSTANCE_TYPES[t]?.[lang] ?? "?"})`);
-      if (evt.scheme === "power_cycle") return fieldsFor([[23, 0, de ? "Power-Cycle-Benachrichtigung" : "Power cycle notification", bytesHex(d)]]);
+      if (evt.scheme === "power_cycle") {
+        const pa = evt.attributes || {};
+        return fieldsFor([
+          [23, 13, de ? "Power-Cycle-Benachrichtigung" : "Power cycle notification", "0x7F7"],
+          [12, 12, de ? "Gruppe gültig" : "Group valid", pa.device_group != null ? "1" : "0"],
+          [11, 7, de ? "Gerätegruppe" : "Device group", pa.device_group != null ? String(pa.device_group) : "–"],
+          [6, 6, de ? "Adresse gültig" : "Address valid", pa.short_address != null ? "1" : "0"],
+          [5, 0, de ? "Kurzadresse" : "Short address", pa.short_address != null ? `D${pa.short_address}` : "–"],
+        ]);
+      }
       if (evt.scheme === "device" || evt.scheme === "device_instance") {
         const byNumber = evt.scheme === "device_instance";
         return fieldsFor([
@@ -582,6 +694,13 @@ export function frameFields(f: Frame, lang: Lang): BitField[] {
       ]);
     }
     const desc = describe24(a, i, c);
+    if (a === 0xc5 || a === 0xc7 || a === 0xc9) {
+      return fieldsFor([
+        [23, 16, de ? "Spezialbefehl" : "Special command", `0x${hex2(a)} ${a === 0xc5 ? "DIRECT WRITE MEMORY" : a === 0xc7 ? "DTR1:DTR0" : "DTR2:DTR1"}`],
+        [15, 8, a === 0xc5 ? "Offset" : a === 0xc7 ? "DTR1" : "DTR2", `${i} · 0x${hex2(i)}`],
+        [7, 0, a === 0xc5 ? (de ? "Wert" : "Value") : a === 0xc7 ? "DTR0" : "DTR1", `${c} · 0x${hex2(c)}`],
+      ]);
+    }
     if (a === 0xc1) {
       return fieldsFor([
         [23, 16, de ? "Spezialbefehl-Kennung" : "Special command marker", "0xC1"],
@@ -767,6 +886,7 @@ export function fromDbRow(r: any): Frame {
   };
   const a = answerTo(f);
   if (a) f.answer_to = a;
+  if (/^(RANDOMISE|PROGRAM SHORT ADDRESS)/.test(f.text)) f.warning = "addressing";
   return f;
 }
 

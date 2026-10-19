@@ -20,8 +20,9 @@ from controldevices import ControlDevices
 import discovery
 from gateway import Gateway
 from history import History
+from names import NameKeeper
 
-VERSION = "2.0.1"
+VERSION = "2.1.0"
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/data"))
 WWW_DIR = Path(os.environ.get("WWW_DIR", Path(__file__).resolve().parent.parent / "www"))
 PORT = int(os.environ.get("PORT", "8099"))
@@ -61,6 +62,7 @@ class App:
         self.session: aiohttp.ClientSession | None = None
         self.gateway: Gateway | None = None
         self.controls: ControlDevices | None = None
+        self.names: NameKeeper | None = None
         self.ha: dict[str, Any] = {}
         self._announced: str | None = self.history.kv_get("announced_host")
 
@@ -70,6 +72,9 @@ class App:
         self.gateway = Gateway(self.session, self.history, self.broadcast)
         self.gateway.on_connected = self._on_gateway_connected
         self.controls = ControlDevices(self.gateway, self.history)
+        self.gateway.decoder.instance_type = self.controls.instance_type
+        self.names = NameKeeper(self.gateway, self.history)
+        self.gateway.on_scan_done = self._on_scan_done
         self.ha = await discovery.ha_config(self.session)
         host = self.options.get("gateway_host") or self.history.kv_get("gateway_host")
         if not host:
@@ -104,6 +109,19 @@ class App:
             if await discovery.announce(self.session, host):
                 self._announced = host
                 self.history.kv_set("announced_host", host)
+
+    async def _on_scan_done(self) -> None:
+        """Give gear their names back after a scan (if they were backed up)."""
+        if not (self.names and self.gateway and self.names.backup_data.get("pending")):
+            return
+        await asyncio.sleep(3)  # let the gateway finish its own bookkeeping
+        try:
+            result = await self.names.restore()
+        except Exception as err:  # noqa: BLE001
+            _LOGGER.warning("Restoring device names failed: %s", err)
+            return
+        await self.broadcast({"type": "names_restored", "data": result})
+        await self.broadcast({"type": "snapshot", "data": self.gateway.state()})
 
     def status(self) -> dict[str, Any]:
         gw = self.gateway.status() if self.gateway else {}
@@ -357,10 +375,67 @@ class App:
             instance = int(instance) if instance is not None else None
             if not (0 <= line <= 3 and 0 <= address <= 63):
                 raise ValueError("line 0-3, address 0-63")
-            device = await self.controls.action(line, address, str(data["action"]), instance)
+            device = await self.controls.action(line, address, str(data["action"]), instance, data.get("value"))
         except (KeyError, TypeError, ValueError) as err:
             return web.json_response({"detail": f"Ungültige Anfrage: {err}"}, status=400)
         return web.json_response(device)
+
+    async def api_names(self, request: web.Request) -> web.Response:
+        assert self.names
+        return web.json_response(self.names.info())
+
+    async def api_names_backup(self, request: web.Request) -> web.Response:
+        assert self.names and self.gateway
+        if not self.gateway.connected:
+            return web.json_response({"detail": "Gateway nicht verbunden"}, status=503)
+        return web.json_response(await self.names.backup())
+
+    async def api_names_restore(self, request: web.Request) -> web.Response:
+        assert self.names and self.gateway
+        if not self.gateway.connected:
+            return web.json_response({"detail": "Gateway nicht verbunden"}, status=503)
+        result = await self.names.restore()
+        await self.broadcast({"type": "snapshot", "data": self.gateway.state()})
+        return web.json_response(result)
+
+    @staticmethod
+    def _target(data: dict[str, Any]) -> tuple[int, int]:
+        line, address = int(data["line"]), int(data["address"])
+        if not (0 <= line <= 3 and 0 <= address <= 63):
+            raise ValueError("line 0-3, address 0-63")
+        return line, address
+
+    async def api_controls_instance(self, request: web.Request) -> web.Response:
+        assert self.controls
+        data = await request.json()
+        try:
+            line, address = self._target(data)
+            return web.json_response(await self.controls.read_instance(line, address, int(data["instance"])))
+        except (KeyError, TypeError, ValueError) as err:
+            return web.json_response({"detail": f"Ungültige Anfrage: {err}"}, status=400)
+
+    async def api_controls_read(self, request: web.Request) -> web.Response:
+        assert self.controls
+        data = await request.json()
+        try:
+            line, address = self._target(data)
+        except (KeyError, TypeError, ValueError) as err:
+            return web.json_response({"detail": f"Ungültige Anfrage: {err}"}, status=400)
+        return web.json_response(await self.controls.refresh(line, address))
+
+    async def api_controls_configure(self, request: web.Request) -> web.Response:
+        assert self.controls
+        data = await request.json()
+        try:
+            line, address = self._target(data)
+            changes = data.get("changes")
+            if not isinstance(changes, dict) or not changes:
+                raise ValueError("changes required")
+            if data.get("instance") is None:
+                return web.json_response({"device": await self.controls.configure_device(line, address, changes)})
+            return web.json_response(await self.controls.configure_instance(line, address, int(data["instance"]), changes))
+        except (KeyError, TypeError, ValueError) as err:
+            return web.json_response({"detail": f"Ungültige Anfrage: {err}"}, status=400)
 
     async def api_controls_direct(self, request: web.Request) -> web.Response:
         assert self.controls
@@ -423,6 +498,12 @@ def build_app() -> web.Application:
     r.add_post("/api/controldevices/scan", core.api_controls_scan)
     r.add_post("/api/controldevices/action", core.api_controls_action)
     r.add_get("/api/controldevices/direct", core.api_controls_direct)
+    r.add_post("/api/controldevices/instance", core.api_controls_instance)
+    r.add_post("/api/controldevices/read", core.api_controls_read)
+    r.add_post("/api/controldevices/configure", core.api_controls_configure)
+    r.add_get("/api/names", core.api_names)
+    r.add_post("/api/names/backup", core.api_names_backup)
+    r.add_post("/api/names/restore", core.api_names_restore)
     r.add_route("*", "/api/gw/{path:.*}", core.proxy)
     r.add_get("/", core.index)
     if (WWW_DIR / "assets").exists():

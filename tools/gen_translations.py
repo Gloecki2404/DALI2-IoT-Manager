@@ -41,6 +41,7 @@ ENTITY = {
         "reachable": T("Reachable", "Erreichbar"),
         "websocket": T("Live connection", "Live-Verbindung"),
         "line_problem": T("DALI line {line} problem", "DALI-Linie {line} Problem"),
+        "failsafe": T("Fail-safe direct control", "Ausfallsichere Direktsteuerung"),
         "diag_gear_overall_failure": T("Gear overall failure", "Betriebsgerät Gesamtfehler"),
         "diag_undervoltage": T("Supply undervoltage", "Unterspannung Versorgung"),
         "diag_overvoltage": T("Supply overvoltage", "Überspannung Versorgung"),
@@ -96,6 +97,7 @@ ENTITY = {
         "refresh": T("Refresh", "Aktualisieren"),
         "refresh_sensors": T("Refresh sensors", "Sensoren aktualisieren"),
         "scan": T("Start DALI scan", "DALI-Scan starten"),
+        "scan_control_devices": T("Search control devices", "Steuergeräte suchen"),
     },
     "event": {
         "push_button": T("Button {instance}", "Taster {instance}"),
@@ -158,6 +160,19 @@ SERVICES = {
             "amber": T("Amber", "Amber"),
             "free": T("Free colour", "Freie Farbe"),
             "brightness_pct": T("Brightness", "Helligkeit"),
+        },
+    ),
+    "set_failsafe_levels": (
+        T("Set fail-safe levels", "Verhalten bei Ausfall setzen"),
+        T(
+            "Store in the gear which level it takes after mains power returns and when the DALI bus fails. Works without the gateway.",
+            "Speichert im Betriebsgerät, welchen Wert es nach Netzwiederkehr und bei Ausfall des DALI-Busses einnimmt. Wirkt auch ohne Gateway.",
+        ),
+        {
+            "power_on_level": T("Power-on level", "Level nach Netzwiederkehr"),
+            "power_on_last_level": T("Power-on: keep last level", "Netzwiederkehr: letzten Wert behalten"),
+            "system_failure_level": T("System failure level", "Level bei Busausfall"),
+            "system_failure_last_level": T("System failure: keep current level", "Busausfall: aktuellen Wert behalten"),
         },
     ),
     "send_raw_control": (

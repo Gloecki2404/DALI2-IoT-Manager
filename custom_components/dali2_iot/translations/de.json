@@ -103,6 +103,9 @@
       "line_problem": {
         "name": "DALI-Linie {line} Problem"
       },
+      "failsafe": {
+        "name": "Ausfallsichere Direktsteuerung"
+      },
       "diag_gear_overall_failure": {
         "name": "Betriebsgerät Gesamtfehler"
       },
@@ -269,6 +272,9 @@
       },
       "scan": {
         "name": "DALI-Scan starten"
+      },
+      "scan_control_devices": {
+        "name": "Steuergeräte suchen"
       }
     },
     "event": {
@@ -403,6 +409,28 @@
         "brightness_pct": {
           "name": "Helligkeit",
           "description": "Helligkeit"
+        }
+      }
+    },
+    "set_failsafe_levels": {
+      "name": "Verhalten bei Ausfall setzen",
+      "description": "Speichert im Betriebsgerät, welchen Wert es nach Netzwiederkehr und bei Ausfall des DALI-Busses einnimmt. Wirkt auch ohne Gateway.",
+      "fields": {
+        "power_on_level": {
+          "name": "Level nach Netzwiederkehr",
+          "description": "Level nach Netzwiederkehr"
+        },
+        "power_on_last_level": {
+          "name": "Netzwiederkehr: letzten Wert behalten",
+          "description": "Netzwiederkehr: letzten Wert behalten"
+        },
+        "system_failure_level": {
+          "name": "Level bei Busausfall",
+          "description": "Level bei Busausfall"
+        },
+        "system_failure_last_level": {
+          "name": "Busausfall: aktuellen Wert behalten",
+          "description": "Busausfall: aktuellen Wert behalten"
         }
       }
     },

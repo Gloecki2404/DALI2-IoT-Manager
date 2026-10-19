@@ -53,6 +53,12 @@ BUTTONS: tuple[ActionDescription, ...] = (
         action=lambda c: c.api.refresh_sensors(),
     ),
     ActionDescription(
+        key="scan_control_devices",
+        translation_key="scan_control_devices",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        action=lambda c: c.async_scan_control_devices(),
+    ),
+    ActionDescription(
         key="scan",
         translation_key="scan",
         entity_category=EntityCategory.CONFIG,

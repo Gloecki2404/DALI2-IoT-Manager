@@ -42,7 +42,7 @@ Beide Teile funktionieren unabhängig voneinander. Zusammen meldet das Add-on da
 
 - **Geräte** – Leuchten schalten, dimmen, Farbtemperatur/RGB, Name, DALI-Gruppen, Fadezeit/-rate, Szenen 0–15, DALI-Parameter (Min/Max, Einschalt- und Notlicht-Level) direkt aus dem Betriebsgerät, Identifizieren
 - **Gruppen & Zonen** – Gruppen-Matrix (Geräte × 16 Gruppen) mit einem Klick, Zonen anlegen und steuern
-- **Direktsteuerung** – prüft, ob Taster und Melder die Leuchten **selbst über den Bus** steuern (funktioniert auch, wenn Gateway oder Home Assistant ausfallen), Application Controller und Ereignismeldungen je Eingang schalten, mitgelesene Direktbefehle
+- **Direktsteuerung** – prüft, ob Taster und Melder die Leuchten **selbst über den Bus** steuern (funktioniert auch, wenn Gateway oder Home Assistant ausfallen), schaltet den Application Controller und stellt alle genormten Einstellungen der Taster und Melder ein (Zeiten, Ereignisfilter, Schema, Priorität, Gruppen, Kurzadresse – wie DALI Cockpit), mitgelesene Direktbefehle
 - **Sensoren & Taster** – Gateway-Sensoren mit Verlauf, automatisch gelernte DALI-2-Eingänge
 - **Automationen** – die Automationen, die direkt im Gateway laufen: Sequenzen, Zeitpläne (auch Sonnenauf-/-untergang), Circadian-Lichtverläufe, Trigger-Aktionen, Event-Weiterleitung, Statusabfragen
 - **DALI-Bus** – Live-Busmonitor mit Klartext-Dekodierung nach IEC 62386, Filter, CSV-Export, DALI-Scan, Linienstatus, Rohbefehle (Expertenmodus)
@@ -56,7 +56,9 @@ Beide Teile funktionieren unabhängig voneinander. Zusammen meldet das Add-on da
 - Status live über den WebSocket des Gateways (kein ständiges Abfragen)
 - Diagnose-Sensoren je Leuchte: Lampenfehler, Betriebsgerätefehler, Erreichbar, …
 - Gateway-Sensoren: Präsenz, Helligkeit, Temperatur, Feuchte, CO₂, VOC …
-- DALI-2-Taster und -Melder werden automatisch gelernt → `event.*`-Entitäten und Geräte-Auslöser im Automations-Editor
+- Leuchten werden über ihre Seriennummer (GTIN + Identifikationsnummer) erkannt – Entitäten und Automationen bleiben erhalten, wenn ein DALI-Scan neue Adressen vergibt
+- DALI-2-Taster und -Melder werden gesucht und automatisch gelernt → `event.*`-Entitäten und Geräte-Auslöser im Automations-Editor, Anzeige „Ausfallsichere Direktsteuerung“ je Gerät
+- Level bei Busausfall / nach Netzwiederkehr als Attribute, setzbar über `dali2_iot.set_failsafe_levels`
 - Energie (DT51, fürs Energie-Dashboard) und Diagnose (DT52), falls die Geräte das können
 - Aktionen: Szene aufrufen/speichern, heller/dunkler, Fadezeit, rohe DALI-Befehle, DALI-Scan, …
 
@@ -109,12 +111,15 @@ Damit das Licht auch funktioniert, wenn das Gateway oder Home Assistant ausfäll
 
 Welche Gruppe welcher Taster mit welcher Funktion steuert, speichert jeder Hersteller in einem eigenen, nicht genormten Speicherbereich – diese Zuordnung wird mit dem Herstellerwerkzeug eingestellt (Lunatone: *DALI Cockpit* über das IoT-Gateway oder die NFC-App).
 
+Außerdem legt jede Leuchte selbst fest, was sie bei **Busausfall** und nach **Netzwiederkehr** tut (Standard meist 100 %). Beides lässt sich im Reiter *Direktsteuerung* für alle Leuchten prüfen und setzen.
+
 ## Hinweise
 
 - Die offizielle HA-Integration **„Lunatone“** nicht zusätzlich für dasselbe Gateway verwenden (doppelte Entitäten).
 - Das Gateway meldet die **Farbtemperatur** bei manchen DT8-Leuchten nicht zurück – die Integration zeigt dann den zuletzt gesendeten Wert.
 - Ab Werk steht das Gateway oft auf der Zeitzone **UTC** – das Add-on zeigt unter *System* einen Hinweis und übernimmt auf Wunsch die HA-Zeitzone (wichtig für Zeitpläne).
 - Eine feste IP-Adresse (DHCP-Reservierung) für das Gateway ist empfehlenswert.
+- Ein **DALI-Scan** kann Geräten neue Kurzadressen geben, auch ohne Neuinstallation. Das Add-on sichert die Gerätenamen vorher und stellt sie danach wieder her; die Integration ordnet Leuchten über ihre Seriennummer zu.
 - Dies ist ein privates Projekt und steht in keiner Verbindung zur Lunatone Industrielle Elektronik GmbH.
 
 ## Entwicklung

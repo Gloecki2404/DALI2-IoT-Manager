@@ -31,6 +31,7 @@
         </ul>
         {{ t("how2") }}
         <RouterLink to="/groups">{{ t("toGroups") }}</RouterLink>
+        <div class="mt-s">{{ t("nvm") }}</div>
       </div>
     </div>
 
@@ -52,6 +53,7 @@
       <Card v-for="d in devices" :key="d.key" :icon="mdiGestureTapButton" :icon-class="d.autark ? 'ok' : 'warn'"
             :title="title(d)" :subtitle="subtitle(d)">
         <template #actions>
+          <button class="btn icon sm" :title="t('deviceSettings')" @click="openSettings(d, null)"><Icon :path="mdiTuneVariant" :size="18" /></button>
           <button class="btn icon sm" :title="t('identify')" @click="act(d, 'identify')"><Icon :path="mdiBullhornOutline" :size="18" /></button>
           <button class="btn icon sm" :title="t('reread')" @click="reread(d)"><Icon :path="mdiRefresh" :size="18" /></button>
         </template>
@@ -79,9 +81,20 @@
             <span class="chip">{{ t("input") }} {{ i.number + 1 }}</span>
             <div class="grow">
               <div class="title">{{ kindName(i.kind) }}</div>
-              <div class="sub">{{ t("eventsToHa") }}<span v-if="i.event_scheme"> · {{ t("scheme") }}: {{ i.event_scheme }}</span>
+              <div class="sub">{{ t("eventsToHa") }}
+                <span v-if="i.event_filter === 0" class="warn-text"> · {{ t("filterEmpty") }}</span>
                 <span v-if="i.error" class="err-text"> · {{ t("error") }} {{ i.error }}</span></div>
+              <div v-if="i.enabled" class="row wrap scheme-row">
+                <span class="small muted">{{ t("scheme") }}</span>
+                <select :key="`sch-${d.key}-${i.number}-${rev[d.key] || 0}`" class="scheme-sel" :value="i.event_scheme ?? ''" :disabled="busy[d.key]"
+                        @change="(ev: Event) => setScheme(d, i, (ev.target as HTMLSelectElement).value)">
+                  <option v-if="!i.event_scheme" value="">–</option>
+                  <option v-for="s in SCHEMES" :key="s" :value="s">{{ t(`sch_${s}`) }}</option>
+                </select>
+                <span v-if="i.ambiguous" class="chip warn" :title="t('ambiguousHint')">{{ t("ambiguous") }}</span>
+              </div>
             </div>
+            <button class="btn icon sm" :title="t('instanceSettings')" @click="openSettings(d, i.number)"><Icon :path="mdiCogOutline" :size="18" /></button>
             <Toggle :key="`inst-${d.key}-${i.number}-${rev[d.key] || 0}`" :model-value="i.enabled" :disabled="busy[d.key]" @change="(v: boolean) => setInstance(d, i.number, v)" />
           </div>
         </div>
@@ -107,6 +120,38 @@
         </details>
       </Card>
     </div>
+
+    <ControlSettings :open="settingsOpen" :device="settingsDevice" :instance="settingsInstance" :devices="devices"
+                     @close="settingsOpen = false" @updated="onSettingsUpdated" @reload="load" />
+
+    <!-- ------------------------------------------------ fail-safe levels -->
+    <Card class="mt-lg" :title="t('levelsTitle')" :subtitle="t('levelsSub')" :icon="mdiLightbulbAlertOutline" flush>
+      <template #actions>
+        <button class="btn sm outline" :disabled="levelsLoading || !online || !gear.length" @click="readLevels">
+          <span v-if="levelsLoading" class="spinner mini"></span><Icon v-else :path="mdiRefresh" :size="16" />{{ t("readLevels") }}
+        </button>
+      </template>
+      <div v-if="!gear.length" class="empty small">{{ t("noGear") }}</div>
+      <div v-else class="table-wrap">
+        <table class="table">
+          <thead><tr><th>{{ t("light") }}</th><th>{{ t("sysFail") }}</th><th>{{ t("powerOn") }}</th></tr></thead>
+          <tbody>
+            <tr v-for="g in gear" :key="g.id">
+              <td><b>{{ g.name }}</b> <span class="faint small mono">L{{ g.line ?? 0 }} A{{ g.address }}</span></td>
+              <td v-for="p in LEVEL_PARAMS" :key="p.key">
+                <select v-if="levels[g.id]" :key="`${p.key}-${g.id}-${levelRev}`" class="level-sel" :value="levels[g.id]?.[p.key] ?? ''" :disabled="levelsLoading || !online"
+                        @change="(ev: Event) => setLevel(g, p, Number((ev.target as HTMLSelectElement).value))">
+                  <option v-if="levels[g.id]?.[p.key] == null" value="">–</option>
+                  <option v-for="o in levelOptions(levels[g.id]?.[p.key], p.key)" :key="o.v" :value="o.v">{{ o.label }}</option>
+                </select>
+                <span v-else class="faint">–</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="small muted pad-x">{{ t("levelsHint") }}</div>
+    </Card>
 
     <!-- ------------------------------------------------ direct commands -->
     <Card class="mt-lg" :title="t('observed')" :subtitle="t('observedSub')" :icon="mdiEarHearing" flush>
@@ -153,22 +198,26 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import {
   mdiAlert,
   mdiBullhornOutline,
+  mdiCogOutline,
   mdiEarHearing,
   mdiGestureTapButton,
   mdiInformationOutline,
+  mdiLightbulbAlertOutline,
   mdiMagnify,
   mdiPowerPlug,
   mdiRefresh,
   mdiShieldAlert,
   mdiShieldCheck,
   mdiSitemapOutline,
+  mdiTuneVariant,
 } from "@mdi/js";
+import ControlSettings from "../components/ControlSettings.vue";
 import Card from "../components/Card.vue";
 import Empty from "../components/Empty.vue";
 import Icon from "../components/Icon.vue";
 import StatCard from "../components/StatCard.vue";
 import Toggle from "../components/Toggle.vue";
-import { api } from "../lib/api";
+import { api, gw } from "../lib/api";
 import { confirmDialog, run, state } from "../lib/store";
 import { lang, useT } from "../lib/i18n";
 import { fmtTime } from "../lib/dali";
@@ -198,6 +247,28 @@ const t = useT({
     modeInstText: "das Gerät meldet nur „gedrückt / bewegt“. Die Reaktion übernimmt Home Assistant oder das Gateway – fällt das aus, bleibt das Licht dunkel.",
     how2: "Ziel und Funktion der Taster (z. B. Gruppe 1, Toggle + Dimmen) werden im Gerät gespeichert. Die Gruppen in den Leuchten verwaltest du hier:",
     toGroups: "Gruppen & Zonen",
+    nvm: "Alle Einstellungen auf dieser Seite speichern die Geräte nichtflüchtig – sie bleiben nach einem Stromausfall und ohne Gateway erhalten.",
+    filterEmpty: "Ereignisfilter leer – sendet nichts",
+    sch_instance: "Instanz (ohne Adresse)",
+    sch_device: "Gerät + Typ",
+    sch_device_instance: "Gerät + Instanz (empfohlen)",
+    sch_device_group: "Gerätegruppe",
+    sch_instance_group: "Instanzgruppe",
+    ambiguous: "nicht unterscheidbar",
+    ambiguousHint: "Ein anderer Eingang sendet mit diesem Schema identische Ereignisse – Home Assistant kann sie nicht auseinanderhalten. Schema „Gerät + Instanz“ wählen.",
+    confirmScheme: "Ereignisschema von {name}, Eingang {n} auf „{s}“ ändern?\n\nDas Schema legt fest, welche Adresse die Ereignisse tragen. Automationen, die auf die bisherigen Ereignisse reagieren, müssen danach ggf. neu zugeordnet werden.",
+    levelsTitle: "Verhalten der Leuchten bei Ausfall",
+    levelsSub: "Im Betriebsgerät gespeichert – wirkt ohne Gateway und Home Assistant",
+    readLevels: "Werte lesen",
+    noGear: "Keine Betriebsgeräte vorhanden.",
+    light: "Leuchte",
+    sysFail: "Bei Busausfall",
+    powerOn: "Nach Netzwiederkehr",
+    keepLevel: "Wert beibehalten",
+    lastLevel: "Letzter Wert",
+    off: "Aus",
+    levelsHint: "„Bei Busausfall“ gilt, wenn die DALI-Busspannung fehlt (z. B. Gateway mit Busversorgung ausgefallen). Für Fluchtwege und Hauptlicht ist 100 % üblich.",
+    confirmLevel: "{name}: „{p}“ auf {v} setzen?",
     unaddressed: "Auf Linie {line} gibt es Steuergeräte ohne Kurzadresse. Diese müssen erst per DALI-Scan adressiert werden.",
     toScan: "Zum Scan",
     devicesTitle: "Gefundene Steuergeräte",
@@ -252,6 +323,8 @@ const t = useT({
     k_generic: "Eingang",
     k_unknown: "Eingang",
     saved: "Übernommen",
+    deviceSettings: "Geräteeinstellungen (Gruppen, Adresse, Power-Cycle)",
+    instanceSettings: "Alle Einstellungen dieses Eingangs (Zeiten, Filter, Gruppen, Priorität)",
     deviceWord: "Steuergerät",
     inputs: "Eingänge",
   },
@@ -279,6 +352,28 @@ const t = useT({
     modeInstText: "the device only reports “pressed / motion”. Home Assistant or the gateway reacts – if they fail, the light stays off.",
     how2: "Target and function of the buttons (e.g. group 1, toggle + dim) are stored in the device. Manage the groups of your lights here:",
     toGroups: "Groups & zones",
+    nvm: "Devices store all settings on this page non-volatile – they survive a power failure and work without the gateway.",
+    filterEmpty: "event filter empty – sends nothing",
+    sch_instance: "Instance (no address)",
+    sch_device: "Device + type",
+    sch_device_instance: "Device + instance (recommended)",
+    sch_device_group: "Device group",
+    sch_instance_group: "Instance group",
+    ambiguous: "not distinguishable",
+    ambiguousHint: "Another input sends identical events with this scheme – Home Assistant cannot tell them apart. Choose “Device + instance”.",
+    confirmScheme: "Change the event scheme of {name}, input {n} to “{s}”?\n\nThe scheme defines which address the events carry. Automations reacting to the previous events may have to be reassigned.",
+    levelsTitle: "Light behaviour on failures",
+    levelsSub: "Stored in the control gear – works without gateway and Home Assistant",
+    readLevels: "Read values",
+    noGear: "No control gear available.",
+    light: "Light",
+    sysFail: "On bus failure",
+    powerOn: "After power returns",
+    keepLevel: "Keep level",
+    lastLevel: "Last level",
+    off: "Off",
+    levelsHint: "“On bus failure” applies when the DALI bus voltage is missing (e.g. a gateway that powers the bus failed). 100 % is common for escape routes and main lighting.",
+    confirmLevel: "{name}: set “{p}” to {v}?",
     unaddressed: "Line {line} has control devices without a short address. Address them with a DALI scan first.",
     toScan: "Go to scan",
     devicesTitle: "Control devices found",
@@ -333,6 +428,8 @@ const t = useT({
     k_generic: "Input",
     k_unknown: "Input",
     saved: "Applied",
+    deviceSettings: "Device settings (groups, address, power cycle)",
+    instanceSettings: "All settings of this input (timers, filter, groups, priority)",
     deviceWord: "Control device",
     inputs: "inputs",
   },
@@ -345,6 +442,8 @@ interface Instance {
   enabled: boolean;
   event_scheme: string | null;
   error: number | null;
+  event_filter?: number | null;
+  ambiguous?: boolean;
 }
 interface ControlDevice {
   key: string;
@@ -440,6 +539,106 @@ async function setInstance(d: ControlDevice, n: number, on: boolean) {
   await act(d, on ? "enable_instance" : "disable_instance", n);
 }
 
+const SCHEMES = ["instance", "device", "device_instance", "device_group", "instance_group"];
+
+// full settings dialog (device or one instance)
+const settingsOpen = ref(false);
+const settingsDevice = ref<ControlDevice | null>(null);
+const settingsInstance = ref<number | null>(null);
+function openSettings(d: ControlDevice, instance: number | null) {
+  settingsDevice.value = d;
+  settingsInstance.value = instance;
+  settingsOpen.value = true;
+}
+function onSettingsUpdated(d: ControlDevice) {
+  replace(d);
+  settingsDevice.value = d;
+}
+async function setScheme(d: ControlDevice, i: Instance, scheme: string) {
+  const ok = await confirmDialog({
+    title: t("scheme"),
+    message: t("confirmScheme", { name: title(d), n: i.number + 1, s: t(`sch_${scheme}`) }),
+    confirmText: t("saved"),
+  });
+  if (!ok) {
+    rev[d.key] = (rev[d.key] || 0) + 1;
+    return;
+  }
+  busy[d.key] = true;
+  const res = await run(
+    () => api("POST", "controldevices/action", { line: d.line, address: d.address, action: "set_event_scheme", instance: i.number, value: scheme }),
+    t("saved"),
+  );
+  if (res) replace(res);
+  else rev[d.key] = (rev[d.key] || 0) + 1;
+  busy[d.key] = false;
+}
+
+// ------------------------------------------- fail-safe levels (IEC 62386-102)
+interface LevelParam {
+  key: "sysFail" | "powerOn";
+  query: number;
+  set: number;
+}
+const LEVEL_PARAMS: LevelParam[] = [
+  { key: "sysFail", query: 164, set: 44 },
+  { key: "powerOn", query: 163, set: 45 },
+];
+const gear = computed(() =>
+  Object.values(state.devices)
+    .filter((g: any) => g.address != null)
+    .sort((a: any, b: any) => (a.line ?? 0) - (b.line ?? 0) || a.address - b.address),
+);
+const levels = reactive<Record<number, Record<string, number | null>>>({});
+const levelsLoading = ref(false);
+const levelRev = ref(0);
+const addrByte = (g: any) => ((g.address & 0x3f) << 1) | 1;
+const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+function levelLabel(v: number, key: string) {
+  if (v === 255) return key === "powerOn" ? t("lastLevel") : t("keepLevel");
+  if (v === 0) return t("off");
+  return `${Math.round((v * 100) / 254)} %`;
+}
+function levelOptions(current: number | null | undefined, key: string) {
+  const values = [255, 0, 25, 64, 127, 191, 254];
+  if (current != null && !values.includes(current)) values.push(current);
+  return values.map((v) => ({ v, label: levelLabel(v, key) }));
+}
+async function readLevels() {
+  levelsLoading.value = true;
+  await run(async () => {
+    for (const g of gear.value as any[]) {
+      const frames = LEVEL_PARAMS.map((p) => ({ address: addrByte(g), command: p.query }));
+      const res: (number | null)[] = await gw.post(`/dali/sendDali16/${g.line ?? 0}`, frames);
+      levels[g.id] = { sysFail: res?.[0] ?? null, powerOn: res?.[1] ?? null };
+      await pause(150); // keep the bus load low
+    }
+  });
+  levelsLoading.value = false;
+}
+async function setLevel(g: any, p: LevelParam, v: number) {
+  const pName = t(p.key);
+  const ok = await confirmDialog({ title: t("levelsTitle"), message: t("confirmLevel", { name: g.name, p: pName, v: levelLabel(v, p.key) }), confirmText: t("saved") });
+  if (!ok) {
+    levelRev.value++;
+    return;
+  }
+  levelsLoading.value = true;
+  await run(async () => {
+    // DTR0 = level, then the configuration command twice (send-twice rule)
+    await gw.post(`/dali/sendDali16/${g.line ?? 0}`, [
+      { address: 0xa3, command: v },
+      { address: addrByte(g), command: p.set },
+      { address: addrByte(g), command: p.set },
+    ]);
+    const res: (number | null)[] = await gw.post(`/dali/sendDali16/${g.line ?? 0}`, [{ address: addrByte(g), command: p.query }]);
+    levels[g.id] = { ...(levels[g.id] || {}), [p.key]: res?.[0] ?? null };
+  }, t("saved"));
+  levelsLoading.value = false;
+  levelRev.value++;
+}
+
 onMounted(() => {
   load();
   loadDirect();
@@ -454,5 +653,10 @@ onMounted(() => {
 .verdict.warn { background: color-mix(in srgb, var(--warning) 16%, transparent); color: color-mix(in srgb, var(--warning) 75%, var(--text)); }
 .verdict .small { color: var(--text2); }
 .err-text { color: var(--error); }
+.warn-text { color: color-mix(in srgb, var(--warning) 75%, var(--text)); }
+.scheme-row { margin-top: 4px; gap: 6px; }
+.scheme-sel, .level-sel { font-size: 12.5px; padding: 3px 6px; max-width: 100%; }
+.pad-x { padding: 10px 16px 14px; }
+.mt-s { margin-top: 6px; }
 details summary { cursor: pointer; }
 </style>

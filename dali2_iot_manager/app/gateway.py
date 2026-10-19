@@ -149,6 +149,9 @@ class Gateway:
         self._tasks: list[asyncio.Task] = []
         self._stop = asyncio.Event()
         self._unsupported: set[tuple[int, str]] = set()
+        self._init_warned = 0.0
+        self._scan_status: str | None = None
+        self.on_scan_done: Callable[[], Awaitable[None]] | None = None
         self.on_connected: Callable[[str, dict[str, Any]], Awaitable[None]] | None = None
 
     @property
@@ -316,6 +319,8 @@ class Gateway:
             )
             if decoded["kind"] == "event":
                 self._learn_input(decoded)
+            if decoded.get("warning") == "addressing":
+                self._warn_addressing(decoded)
             await self.broadcast({"type": "monitor", "data": decoded})
             return
         if isinstance(payload, dict):
@@ -344,6 +349,12 @@ class Gateway:
                         asyncio.get_running_loop().create_task(self._resnapshot())
             elif mtype == "info":
                 self.info = payload
+            elif mtype == "scan":
+                status = payload.get("status")
+                if status == "done" and self._scan_status not in (None, "done") and self.on_scan_done:
+                    asyncio.get_running_loop().create_task(self.on_scan_done())
+                if status:
+                    self._scan_status = status
         await self.broadcast(msg)
 
     async def _resnapshot(self) -> None:
@@ -355,6 +366,22 @@ class Gateway:
             _LOGGER.debug("Resnapshot failed: %s", err)
 
     # --------------------------------------------------------------- inputs
+    def _warn_addressing(self, decoded: dict[str, Any]) -> None:
+        """RANDOMISE / PROGRAM SHORT ADDRESS: short addresses are being (re)assigned.
+        (INITIALISE alone is harmless – DALI Cockpit sends it before every read-out.)"""
+        now = time.time()
+        if now - self._init_warned < 300:
+            return
+        self._init_warned = now
+        source = "einem anderen Busteilnehmer" if decoded.get("external") else "dem Gateway"
+        row = self.history.log_event(
+            "warning", "bus",
+            f"Adressierung auf Linie {decoded.get('line')} durch {source} ({decoded.get('text')}) – "
+            "Kurzadressen können sich ändern, Gerätenamen danach prüfen",
+            data={"text": decoded.get("text"), "external": decoded.get("external")},
+        )
+        asyncio.get_running_loop().create_task(self.broadcast({"type": "addon_event", "data": row}))
+
     def _learn_input(self, decoded: dict[str, Any]) -> None:
         evt = decoded.get("event") or {}
         key = evt.get("source_key")

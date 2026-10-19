@@ -1,5 +1,33 @@
 # Changelog
 
+## 2.1.0
+
+**Gerätenamen und Entitäten überstehen einen DALI-Scan**
+
+- Ein Scan kann Geräten neue Kurzadressen geben – auch ohne Neuinstallation, weil das Gateway doppelt vergebene Adressen auflöst. Das Add-on sichert deshalb vor jedem Scan die Gerätenamen, zugeordnet über die Seriennummer im Gerät (Speicherbank 0: GTIN + Identifikationsnummer), und gibt jedem Gerät danach seinen Namen zurück. Auch manuell unter *DALI-Bus → Scan*.
+- Integration: Leuchten werden über GTIN + Identifikationsnummer identifiziert statt über Linie/Adresse. Entitäten, Namen, Räume und Automationen bleiben am physischen Gerät, wenn es eine neue Adresse bekommt. Bestehende Installationen werden automatisch umgestellt (Entitäts-IDs bleiben gleich).
+
+**Ausfallsicherheit**
+
+- Neu: *Verhalten der Leuchten bei Ausfall* (Reiter Direktsteuerung) – Level bei Busausfall und nach Netzwiederkehr für alle Leuchten lesen und setzen. In der Integration als Attribute `system_failure_level` / `power_on_level` und Aktion `dali2_iot.set_failsafe_levels`.
+- Direktsteuerung: **alle genormten Einstellungen der Taster und Melder** – derselbe Umfang wie in DALI Cockpit (IEC 62386-103/301/303/304):
+  - je Eingang: Ereignisse an/aus, Ereignisschema, Priorität, Instanzgruppen, Ereignisfilter sowie die Zeiten (Taster: kurzer Druck, Doppelklick, Wiederholrate, Klemmen; Präsenz: Halte-, Report-, Totzeit; Licht: Report-, Totzeit, Hysterese, Hysterese-Minimum) in ms/s statt Rohwerten
+  - je Gerät: Power-Cycle-Meldung, alle Eingänge an/aus, Gerätegruppen 0–31, Kurzadresse ändern (mit Prüfung an der neuen Adresse) und RESET auf Standardwerte (Expertenmodus)
+  - Eingänge, deren Ereignisse nicht unterscheidbar sind, werden markiert; „Ereignisse an Gateway/HA“ berücksichtigt Ereignisfilter und Ruhemodus
+- Integration: sucht DALI-2-Taster und -Melder selbst (Button *Steuergeräte suchen*, automatisch beim ersten Start und nach jedem Scan), legt ihre Ereignis-Entitäten schon vor dem ersten Tastendruck an und zeigt je Gerät *Ausfallsichere Direktsteuerung* an.
+- Integration: Präsenzmelder mit Ereignisschema „Instanz“ (ohne Adresse) aktualisieren jetzt auch den Präsenz-Sensor des Gateways, der sonst stehen bleibt.
+
+**Korrekturen nach IEC 62386 (Abgleich mit der Norm)**
+
+- Busmonitor: Instanzbefehle (Taster-, Präsenz-, Lichtsensor-Timer usw.) werden richtig benannt statt als Gerätebefehle; Instanzbyte nach Tabelle 9 dekodiert; Power-Cycle-Meldungen über die Bitmaske erkannt (vorher teilweise mit Instanzgruppen-Ereignissen verwechselt); DIRECT WRITE MEMORY, DTR1:DTR0, DTR2:DTR1; READ MEMORY LOCATION wird als Abfrage erkannt und seine Antwort zugeordnet; 25-Bit-Frames als eDALI.
+- Adressierung auf dem Bus (RANDOMISE, PROGRAM SHORT ADDRESS) wird im Busmonitor rot markiert und im Ereignisprotokoll gewarnt – egal ob vom Gateway oder einem anderen Werkzeug. Ein bloßes INITIALISE (sendet z. B. DALI Cockpit vor jedem Auslesen) löst keine Warnung aus.
+- „Identifizieren“ in der Gerätedetailansicht wird wie vorgeschrieben doppelt gesendet.
+- Präsenzmelder: Bewegung zählt als „belegt“; Wiederholungen und Bewegungsmeldungen ohne Zustandswechsel erzeugen keine HA-Ereignisse mehr. Ereignisse im Schema „Gerät + Instanz“ (ohne Instanztyp) werden über eine einmalige Abfrage zugeordnet.
+- Buslast: Pausen zwischen den Abfragen der Steuergeräte-Suche; höchstens 16 Befehle pro Gateway-Anfrage.
+- Hersteller-Erkennung über GTIN: Tridonic ergänzt.
+- Einstellungen an Steuergeräten werden wie bei DALI Cockpit mit SAVE PERSISTENT VARIABLES sofort dauerhaft gespeichert.
+- Busmonitor: Ereignisse im Schema „Gerät + Instanz“ zeigen den Instanztyp (z. B. „Präsenzmelder: frei“) aus der Steuergeräte-Suche.
+
 ## 2.0.1
 
 - **Wichtig:** Ein-/Ausschalten der Ereignismeldungen je Eingang (Reiter Direktsteuerung) hat den falschen DALI-Befehl gesendet (SET EVENT PRIORITY statt ENABLE/DISABLE INSTANCE). Korrigiert nach IEC 62386-103; „Identifizieren“ wird jetzt wie vorgeschrieben doppelt gesendet.

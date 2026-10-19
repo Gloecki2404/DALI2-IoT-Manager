@@ -73,6 +73,35 @@ goto_last_active:
           step: 0.1
           unit_of_measurement: s
 
+set_failsafe_levels:
+  target:
+    entity:
+      integration: dali2_iot
+      domain: light
+  fields:
+    power_on_level:
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          unit_of_measurement: "%"
+    power_on_last_level:
+      default: false
+      selector:
+        boolean:
+    system_failure_level:
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          unit_of_measurement: "%"
+    system_failure_last_level:
+      default: false
+      selector:
+        boolean:
+
 set_fade_time:
   target:
     entity:

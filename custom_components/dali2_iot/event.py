@@ -74,6 +74,20 @@ class DaliInputEvent(CoordinatorEntity[LunatoneCoordinator], EventEntity):
     def available(self) -> bool:
         return True
 
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        meta = self.coordinator.inputs.get(self.key) or {}
+        attrs: dict[str, Any] = {
+            "dali_line": meta.get("line"),
+            "dali_address": meta.get("short_address"),
+            "instance_number": meta.get("instance_number"),
+        }
+        if meta.get("ambiguous"):
+            # several instances send identical events (event scheme without
+            # address/number) – set the scheme to "device/instance"
+            attrs["ambiguous"] = True
+        return attrs
+
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
         self.async_on_remove(
